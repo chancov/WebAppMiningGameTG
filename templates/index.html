@@ -1,0 +1,4402 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Профиль Telegram</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        html {
+            font-size: 16px;
+        }
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0a121c 0%, #1a1f2b 50%, #0a121c 100%);
+            color: #fff;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-size: 10px !important;
+        }
+        .app-wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, #181f2a 0%, #23272f 100%);
+            padding: 1.25rem 1.1rem 1rem 1.1rem;
+            border-bottom: 1px solid rgba(75, 156, 226, 0.2);
+            box-shadow: 0 0.25rem 1.25rem rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(0.6rem);
+            position: relative;
+            z-index: 2;
+        }
+        .profile-row {
+            display: flex;
+            align-items: center;
+        }
+        .avatar {
+            width: 3.2rem; height: 3.2rem;
+            border-radius: 1rem;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-right: 0.9rem;
+            overflow: hidden;
+            border: 0.13rem solid #7fd7ff;
+            box-shadow: 0 0 0 0.19rem rgba(127, 215, 255, 0.15), 0 0.13rem 0.5rem rgba(75, 156, 226, 0.10);
+        }
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .profile-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.2rem;
+            background: linear-gradient(135deg, #fff 0%, #e0e0e0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .profile-id {
+            color: #7a8599;
+            font-size: 0.95rem;
+            margin-top: 0;
+            font-weight: 500;
+        }
+        .settings-btn {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.75rem;
+            background: linear-gradient(135deg, #23272f 0%, #2c313a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 0.06rem solid rgba(75, 156, 226, 0.2);
+            transition: all 0.3s ease;
+            box-shadow: 0 0.13rem 0.63rem rgba(0, 0, 0, 0.2);
+        }
+        .settings-btn:hover {
+            transform: translateY(-0.13rem);
+            box-shadow: 0 0.25rem 0.94rem rgba(75, 156, 226, 0.3);
+            border-color: rgba(75, 156, 226, 0.4);
+        }
+        .settings-btn:active {
+            transform: translateY(0);
+        }
+        .settings-btn svg {
+            width: 1.38rem;
+            height: 1.38rem;
+            fill: #4B9CE2;
+            transition: all 0.3s ease;
+        }
+        .settings-btn:hover svg {
+            fill: #fff;
+        }
+        .profile-card {
+            background: linear-gradient(135deg, #23272f 0%, #2c313a 100%);
+            border-radius: 32px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 100%;
+            margin: 32px auto 0 auto;
+            padding: 36px 24px 28px 24px;
+            text-align: left;
+            position: relative;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(75, 156, 226, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        .profile-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+            border-color: rgba(75, 156, 226, 0.2);
+        }
+        .main-content-area {
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 0;
+            overflow: hidden;
+        }
+        .main-content {
+            min-height: 300px;
+            padding: 32px 16px 80px 16px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .nav-bar {
+            position: fixed;
+            left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, #181f2a 0%, #23272f 100%);
+            border-top: 1px solid rgba(75, 156, 226, 0.2);
+            display: flex;
+            justify-content: center;
+            padding: 12px 0 10px 0;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+            z-index: 3;
+        }
+        .nav-btn {
+            color: #fff;
+            background: linear-gradient(135deg, #23272f 0%, #2c313a 100%);
+            border: 1px solid rgba(75, 156, 226, 0.2);
+            border-radius: 16px;
+            font-size: 1.1em;
+            padding: 10px 36px;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(75, 156, 226, 0.3);
+            border-color: rgba(75, 156, 226, 0.4);
+        }
+        .nav-btn:active, .nav-btn.active {
+            background: linear-gradient(135deg, #4B9CE2 0%, #8841D5 100%);
+            border-color: rgba(75, 156, 226, 0.6);
+            box-shadow: 0 4px 15px rgba(75, 156, 226, 0.4);
+        }
+        .settings-modal {
+            position: fixed;
+            left: 0; right: 0; top: 0; bottom: 0;
+            background: rgba(10, 18, 28, 0.65);
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+        }
+        .settings-content {
+            position: relative;
+            background: linear-gradient(to bottom, #10131a 0%, #10131a 40%, #23272f 80%, #444 100%), url('/static/profile_backgrounds/bg1.png') top center/cover no-repeat;
+            border-radius: 28px;
+            box-shadow: 0 8px 40px 0 #000a, 0 2px 12px #0002;
+            padding: 32px 24px 28px 24px;
+            min-width: 320px;
+            max-width: 95vw;
+            width: 370px;
+            min-height: 320px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
+            border: 1.5px solid #23272f;
+        }
+        .settings-content h3 {
+            margin-top: 0;
+            margin-bottom: 18px;
+            color: #fff;
+            font-size: 1.15em;
+            font-weight: 700;
+            text-align: center;
+            letter-spacing: 0.01em;
+            background: linear-gradient(90deg, #fff 60%, #7fd7ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .bg-list {
+            width: 100%;
+            min-height: 120px;
+            margin-bottom: 18px;
+        }
+        .settings-close-btn {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            background: rgba(30,40,60,0.85);
+            border: none;
+            border-radius: 50%;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            color: #7fd7ff;
+            cursor: pointer;
+            box-shadow: 0 2px 8px #0002;
+            transition: background 0.2s, color 0.2s;
+            z-index: 2;
+        }
+        .settings-close-btn:hover {
+            background: #23272f;
+            color: #fff;
+        }
+        .user-stats-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .user-stats-content {
+            background: #23272f;
+            border-radius: 18px;
+            padding: 24px;
+            max-width: 90%;
+            width: 320px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        }
+        .user-stats-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .user-stats-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: #181f2a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 1.2em;
+            color: #7fd7ff;
+            border: 2px solid #7fd7ff;
+        }
+        .user-stats-info {
+            flex: 1;
+        }
+        .close-btn {
+            background: none;
+            border: none;
+            color: #7a8599;
+            font-size: 1.5em;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: color 0.2s;
+        }
+        .close-btn:hover {
+            color: #fff;
+        }
+        .user-stats-body {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .stat-item {
+            display: flex;
+            align-items: center;
+            background: #181f2a;
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid #2a2f3a;
+        }
+        .stat-icon {
+            font-size: 1.5em;
+            margin-right: 12px;
+            width: 32px;
+            text-align: center;
+        }
+        .stat-info {
+            flex: 1;
+        }
+        .stat-label {
+            color: #7a8599;
+            font-size: 0.9em;
+            margin-bottom: 4px;
+        }
+        .stat-value {
+            color: #fff;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+        .bg-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-top: 16px;
+        }
+        .bg-thumb {
+            width: 65px;
+            height: 45px;
+            border-radius: 12px;
+            object-fit: cover;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        .bg-thumb:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(75, 156, 226, 0.3);
+        }
+        .bg-thumb.selected {
+            border: 2px solid #4B9CE2;
+            box-shadow: 0 4px 15px rgba(75, 156, 226, 0.4);
+        }
+        
+        /* Animated Settings Button from Uiverse.io */
+        .btn-cont {
+            margin-left: 8px;
+            background: none;
+            border: none;
+            box-shadow: none;
+            border-radius: 12px;
+        }
+        .button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 8px;
+            position: relative;
+            transition: background-color 0.2s ease;
+        }
+        .button:hover .tooltip {
+            background-color: rgba(0, 0, 0, 0.8);
+            visibility: visible;
+            opacity: 1;
+        }
+        .settings-btn {
+            display: block;
+            transition: transform 0.4s ease-in;
+            fill: #4B9CE2;
+        }
+        .settings-btn:hover {
+            transform: rotate(60deg);
+            fill: #fff;
+        }
+        .settings-btn:active {
+            animation: rot 1s linear infinite;
+        }
+        @keyframes rot {
+            from {
+                transform: rotate(-100deg);
+            }
+            to {
+                transform: rotate(180deg);
+            }
+        }
+        .tooltip {
+            visibility: hidden;
+            width: 100px;
+            background-color: rgba(0, 0, 0, 0.9);
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 8px 12px;
+            position: absolute;
+            z-index: 1001;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -50px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 12px;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(75, 156, 226, 0.2);
+        }
+        .tooltip::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: rgba(0, 0, 0, 0.9) transparent transparent transparent;
+        }
+        @media (max-width: 480px) {
+            .header { 
+                padding: 16px 12px 12px 12px; 
+            }
+            .main-content-area {
+                padding: 0 0 0 0;
+            }
+            .main-content { 
+                padding: 28px 8px 80px 8px; 
+            }
+            .nav-btn { 
+                padding: 12px 20vw; 
+                font-size: 1em; 
+                border-radius: 14px;
+            }
+            .profile-card { 
+                padding: 24px 12px 20px 12px; 
+                margin: 24px 12px 0 12px;
+                border-radius: 20px;
+            }
+            .avatar {
+                width: 48px;
+                height: 48px;
+                border-radius: 14px;
+            }
+            .settings-btn {
+                width: 36px;
+                height: 36px;
+                border-radius: 10px;
+            }
+        }
+        #svg-global {
+          zoom: 1.2;
+          overflow: visible;
+        }
+        @keyframes fade-particles {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
+        }
+        @keyframes floatUp {
+          0% { transform: translateY(0); opacity: 0; }
+          10% { opacity: 1; }
+          100% { transform: translateY(-40px); opacity: 0; }
+        }
+        #particles { animation: fade-particles 5s infinite alternate; }
+        .particle { animation: floatUp linear infinite; }
+        .p1 { animation-duration: 2.2s; animation-delay: 0s; }
+        .p2 { animation-duration: 2.5s; animation-delay: 0.3s; }
+        .p3 { animation-duration: 2s; animation-delay: 0.6s; }
+        .p4 { animation-duration: 2.8s; animation-delay: 0.2s; }
+        .p5 { animation-duration: 2.3s; animation-delay: 0.4s; }
+        .p6 { animation-duration: 3s; animation-delay: 0.1s; }
+        .p7 { animation-duration: 2.1s; animation-delay: 0.5s; }
+        .p8 { animation-duration: 2.6s; animation-delay: 0.2s; }
+        .p9 { animation-duration: 2.4s; animation-delay: 0.3s; }
+        @keyframes bounce-lines {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-3px); }
+        }
+        #line-v1, #line-v2, #node-server, #panel-rigth, #reflectores, #particles {
+          animation: bounce-lines 3s ease-in-out infinite alternate;
+        }
+        #line-v2 { animation-delay: 0.2s; }
+        #node-server, #panel-rigth, #reflectores, #particles { animation-delay: 0.4s; }
+        .preloader-spinner {
+          stroke-dasharray: 226.2;
+          stroke-dashoffset: 226.2;
+          animation: preloader-spin 1.2s linear infinite;
+          filter: drop-shadow(0 0 8px #4B9CE2);
+        }
+        @keyframes preloader-spin {
+          0% { stroke-dashoffset: 226.2; }
+          80% { stroke-dashoffset: 56.55; }
+          100% { stroke-dashoffset: 0; }
+        }
+        .preloader-bg {
+          position: absolute;
+          width: 100vw;
+          height: 100vh;
+          top: 0; left: 0;
+          z-index: 0;
+          background: radial-gradient(circle at 70% 30%, #23272f 0%, #1a1f2b 60%, #0a121c 100%);
+          animation: preloader-bg-move 6s linear infinite alternate;
+        }
+        @keyframes preloader-bg-move {
+          0% { background-position: 70% 30%; }
+          100% { background-position: 30% 70%; }
+        }
+        .preloader-cube-wrap {
+          position: relative;
+          z-index: 1;
+          perspective: 600px;
+          width: 100px;
+          height: 100px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .preloader-cube {
+          width: 100px;
+          height: 100px;
+          transform-style: preserve-3d;
+          animation: cube-3d-spin 1.6s cubic-bezier(.77,.01,.29,1.01) infinite;
+        }
+        @keyframes cube-3d-spin {
+          0% { transform: rotate3d(1, 1, 0, 0deg); }
+          80% { transform: rotate3d(1, 1, 0, 320deg); }
+          100% { transform: rotate3d(1, 1, 0, 360deg); }
+        }
+        
+        /* Starry Background */
+        .starry-bg {
+          position: absolute;
+          width: 100vw;
+          height: 100vh;
+          top: 0; left: 0;
+          z-index: 0;
+          background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+          overflow: hidden;
+        }
+        
+        .stars {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+        }
+        
+        .star {
+          position: absolute;
+          background: white;
+          border-radius: 50%;
+          animation: twinkle 3s infinite;
+        }
+        
+        .star:nth-child(1) { width: 2px; height: 2px; top: 10%; left: 20%; animation-delay: 0s; }
+        .star:nth-child(2) { width: 1px; height: 1px; top: 15%; left: 80%; animation-delay: 0.5s; }
+        .star:nth-child(3) { width: 3px; height: 3px; top: 25%; left: 40%; animation-delay: 1s; }
+        .star:nth-child(4) { width: 1px; height: 1px; top: 35%; left: 70%; animation-delay: 1.5s; }
+        .star:nth-child(5) { width: 2px; height: 2px; top: 45%; left: 10%; animation-delay: 2s; }
+        .star:nth-child(6) { width: 1px; height: 1px; top: 55%; left: 90%; animation-delay: 2.5s; }
+        .star:nth-child(7) { width: 2px; height: 2px; top: 65%; left: 30%; animation-delay: 0.3s; }
+        .star:nth-child(8) { width: 1px; height: 1px; top: 75%; left: 60%; animation-delay: 0.8s; }
+        .star:nth-child(9) { width: 3px; height: 3px; top: 85%; left: 15%; animation-delay: 1.3s; }
+        .star:nth-child(10) { width: 1px; height: 1px; top: 95%; left: 85%; animation-delay: 1.8s; }
+        
+        @keyframes twinkle {
+          0%, 100% { opacity: 0.3; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.2); }
+        }
+        
+        /* Hourglass CSS from Uiverse.io */
+        .hourglassBackground {
+          position: relative;
+          background: radial-gradient(circle, rgba(75, 156, 226, 0.1) 0%, rgba(136, 65, 213, 0.05) 100%);
+          height: 130px;
+          width: 130px;
+          border-radius: 50%;
+          margin: 30px auto;
+          border: 2px solid rgba(75, 156, 226, 0.3);
+          backdrop-filter: blur(10px);
+        }
+
+        .hourglassContainer {
+          position: absolute;
+          top: 30px;
+          left: 40px;
+          width: 50px;
+          height: 70px;
+          animation: hourglassRotate 2s ease-in 0s infinite;
+          transform-style: preserve-3d;
+          perspective: 1000px;
+        }
+
+        .hourglassContainer div,
+        .hourglassContainer div:before,
+        .hourglassContainer div:after {
+          transform-style: preserve-3d;
+        }
+
+        @keyframes hourglassRotate {
+          0% { transform: rotateX(0deg); }
+          50% { transform: rotateX(180deg); }
+          100% { transform: rotateX(180deg); }
+        }
+
+        .hourglassCapTop {
+          top: 0;
+        }
+
+        .hourglassCapTop:before {
+          top: -25px;
+        }
+
+        .hourglassCapTop:after {
+          top: -20px;
+        }
+
+        .hourglassCapBottom {
+          bottom: 0;
+        }
+
+        .hourglassCapBottom:before {
+          bottom: -25px;
+        }
+
+        .hourglassCapBottom:after {
+          bottom: -20px;
+        }
+
+        .hourglassGlassTop {
+          transform: rotateX(90deg);
+          position: absolute;
+          top: -16px;
+          left: 3px;
+          border-radius: 50%;
+          width: 44px;
+          height: 44px;
+          background-color: rgba(75, 156, 226, 0.8);
+        }
+
+        .hourglassGlass {
+          perspective: 100px;
+          position: absolute;
+          top: 32px;
+          left: 20px;
+          width: 10px;
+          height: 6px;
+          background-color: rgba(75, 156, 226, 0.6);
+          opacity: 0.5;
+        }
+
+        .hourglassGlass:before,
+        .hourglassGlass:after {
+          content: '';
+          display: block;
+          position: absolute;
+          background-color: rgba(75, 156, 226, 0.6);
+          left: -17px;
+          width: 44px;
+          height: 28px;
+        }
+
+        .hourglassGlass:before {
+          top: -27px;
+          border-radius: 0 0 25px 25px;
+        }
+
+        .hourglassGlass:after {
+          bottom: -27px;
+          border-radius: 25px 25px 0 0;
+        }
+
+        .hourglassCurves:before,
+        .hourglassCurves:after {
+          content: '';
+          display: block;
+          position: absolute;
+          top: 32px;
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background-color: rgba(75, 156, 226, 0.8);
+          animation: hideCurves 2s ease-in 0s infinite;
+        }
+
+        .hourglassCurves:before {
+          left: 15px;
+        }
+
+        .hourglassCurves:after {
+          left: 29px;
+        }
+
+        @keyframes hideCurves {
+          0% { opacity: 1; }
+          25% { opacity: 0; }
+          30% { opacity: 0; }
+          40% { opacity: 1; }
+          100% { opacity: 1; }
+        }
+
+        .hourglassSandStream:before {
+          content: '';
+          display: block;
+          position: absolute;
+          left: 24px;
+          width: 3px;
+          background-color: #4B9CE2;
+          animation: sandStream1 2s ease-in 0s infinite;
+        }
+
+        .hourglassSandStream:after {
+          content: '';
+          display: block;
+          position: absolute;
+          top: 36px;
+          left: 19px;
+          border-left: 6px solid transparent;
+          border-right: 6px solid transparent;
+          border-bottom: 6px solid #4B9CE2;
+          animation: sandStream2 2s ease-in 0s infinite;
+        }
+
+        @keyframes sandStream1 {
+          0% { height: 0; top: 35px; }
+          50% { height: 0; top: 45px; }
+          60% { height: 35px; top: 8px; }
+          85% { height: 35px; top: 8px; }
+          100% { height: 0; top: 8px; }
+        }
+
+        @keyframes sandStream2 {
+          0% { opacity: 0; }
+          50% { opacity: 0; }
+          51% { opacity: 1; }
+          90% { opacity: 1; }
+          91% { opacity: 0; }
+          100% { opacity: 0; }
+        }
+
+        .hourglassSand:before,
+        .hourglassSand:after {
+          content: '';
+          display: block;
+          position: absolute;
+          left: 6px;
+          background-color: #4B9CE2;
+          perspective: 500px;
+        }
+
+        .hourglassSand:before {
+          top: 8px;
+          width: 39px;
+          border-radius: 3px 3px 30px 30px;
+          animation: sandFillup 2s ease-in 0s infinite;
+        }
+
+        .hourglassSand:after {
+          border-radius: 30px 30px 3px 3px;
+          animation: sandDeplete 2s ease-in 0s infinite;
+        }
+
+        @keyframes sandFillup {
+          0% { opacity: 0; height: 0; }
+          60% { opacity: 1; height: 0; }
+          100% { opacity: 1; height: 17px; }
+        }
+
+        @keyframes sandDeplete {
+          0% { opacity: 0; top: 45px; height: 17px; width: 38px; left: 6px; }
+          1% { opacity: 1; top: 45px; height: 17px; width: 38px; left: 6px; }
+          24% { opacity: 1; top: 45px; height: 17px; width: 38px; left: 6px; }
+          25% { opacity: 1; top: 41px; height: 17px; width: 38px; left: 6px; }
+          50% { opacity: 1; top: 41px; height: 17px; width: 38px; left: 6px; }
+          90% { opacity: 1; top: 41px; height: 0; width: 10px; left: 20px; }
+        }
+        /* nav-icon-btn for compact SVG-only buttons */
+        .nav-icon-btn {
+            padding: 8px 0;
+            width: 56px;
+            min-width: 56px;
+            max-width: 56px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .nav-icon-btn svg {
+            display: block;
+            margin: 0 auto;
+        }
+        /* Новый стиль навигации bottom bar */
+        .nav-bar-modern {
+            position: fixed;
+            left: 50%;
+            bottom: 24px;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #101114;
+            border-radius: 24px;
+            box-shadow: 0 6px 32px 0 rgba(0,0,0,0.45), 0 1.5px 0 0 #222 inset;
+            padding: 0 18px;
+            height: 64px;
+            min-width: 240px;
+            z-index: 10;
+        }
+        .nav-btn-modern {
+            background: none;
+            border: none;
+            outline: none;
+            margin: 0 8px;
+            border-radius: 14px;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+        .nav-btn-modern svg {
+            display: block;
+            width: 28px;
+            height: 28px;
+            transition: filter 0.2s;
+        }
+        .nav-btn-modern.active, .nav-btn-modern:active {
+            background: rgba(255,255,255,0.07);
+            box-shadow: 0 0 0 2px #ffd700, 0 2px 8px rgba(255, 215, 0, 0.15);
+        }
+        .nav-btn-modern.active svg path[stroke="white"] {
+            stroke: #ffd700;
+            filter: drop-shadow(0 0 4px #ffd70088);
+        }
+        .nav-btn-modern.active svg path[stroke="gold"] {
+            stroke: #ffd700;
+        }
+        .nav-btn-modern:focus {
+            outline: 2px solid #ffd700;
+        }
+        @media (max-width: 480px) {
+            .nav-bar-modern {
+                height: 56px;
+                min-width: 180px;
+                padding: 0 6px;
+                border-radius: 18px;
+                bottom: 10px;
+            }
+            .nav-btn-modern {
+                width: 40px;
+                height: 40px;
+                border-radius: 10px;
+                margin: 0 4px;
+            }
+            .nav-btn-modern svg {
+                width: 22px;
+                height: 22px;
+            }
+        }
+        /* Leaderboard styles */
+        .leaderboard-content {
+            padding: 20px 0 0 0;
+        }
+        .leaderboard-list {
+            gap: 10px;
+            max-width: 400px;
+            padding-bottom: 12px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        .leaderboard-profile-card, .leaderboard-row {
+            min-height: 48px;
+            border-radius: 15px;
+            padding: 12px 16px 12px 12px;
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+        }
+        .leaderboard-profile-card .avatar, .leaderboard-user-block .avatar, .leaderboard-avatar {
+            width: 34px; height: 34px;
+            border-radius: 10px;
+            margin-right: 12px;
+            border-width: 2px;
+        }
+        .leaderboard-profile-card .profile-name, .leaderboard-user-block .profile-name, .leaderboard-user-name {
+            font-size: 0.97rem;
+            margin-bottom: 0.1rem;
+            max-width: 120px;
+        }
+        .leaderboard-profile-card .profile-id, .leaderboard-user-block .profile-id, .leaderboard-user-balance {
+            font-size: 0.78rem;
+        }
+        .leaderboard-profile-card .profile-rank, .leaderboard-user-block .profile-rank, .leaderboard-user-rank {
+            font-size: 0.97rem;
+            margin-left: 10px;
+            min-width: 32px;
+        }
+        .leaderboard-row .avatar, .leaderboard-row .leaderboard-avatar {
+            width: 28px; height: 28px;
+            border-radius: 7px;
+            margin-right: 10px;
+        }
+        .leaderboard-row .profile-name, .leaderboard-row .leaderboard-user-name {
+            font-size: 0.9rem;
+        }
+        .leaderboard-row .profile-id, .leaderboard-row .leaderboard-user-balance {
+            font-size: 0.75rem;
+        }
+        .leaderboard-row .profile-rank, .leaderboard-row .leaderboard-rank {
+            font-size: 0.9rem;
+            min-width: 24px;
+            margin-left: 7px;
+        }
+        .leaderboard-row .medal {
+            font-size: 1.1rem;
+            margin-left: 7px;
+        }
+        /* Referrals vertical scroll */
+        .referrals-list {
+            gap: 10px;
+            max-width: 400px;
+            padding-bottom: 12px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        .referral-item {
+            border-radius: 15px;
+            padding: 12px 16px 12px 12px;
+            display: flex;
+            align-items: center;
+        }
+        .referral-item .avatar {
+            width: 28px; height: 28px;
+            border-radius: 7px;
+            margin-right: 10px;
+        }
+        .referral-item div[style*='font-weight:600'] {
+            font-size: 0.9rem !important;
+        }
+        .referral-item div[style*='color:#7a8599'] {
+            font-size: 0.75rem !important;
+        }
+        @media (max-width: 500px) {
+          .leaderboard-list, .referrals-list {
+            max-width: 99vw;
+            padding-left: 2px;
+            padding-right: 2px;
+          }
+        }
+        .referrals-title {
+            color: #fff;
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .referrals-empty {
+            color: #7a8599;
+            font-size: 1em;
+            text-align: center;
+            margin: 0;
+        }
+        /* Balance and Mining styles */
+        .balance-display {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 2.2rem 0 0 0;
+            padding: 0;
+            text-align: center;
+        }
+        .balance-amount {
+            font-size: 2.2em !important;
+            font-weight: 700;
+            color: #7fd7ff;
+            letter-spacing: 0.04em;
+            margin-bottom: 0.2em;
+        }
+        .balance-currency {
+            font-size: 1.1em !important;
+            color: #7fd7ff;
+            opacity: 0.7;
+            letter-spacing: 0.08em;
+            margin-bottom: 1.1rem;
+        }
+        .balance-rank {
+            color: #ffd700;
+            font-size: 1em;
+            margin-top: 0.3em;
+        }
+        .mining-btn-modern {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 90%;
+            max-width: 20rem;
+            margin: 0 auto 2rem auto;
+            padding: 1.1rem 0 1.1rem 0;
+            font-size: 0.9em !important;
+            font-weight: 600;
+            color: #fff;
+            background: none;
+            border: 0.13rem solid #ffd700;
+            border-radius: 0.88rem;
+            box-shadow: none;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            outline: none;
+            position: relative;
+            letter-spacing: 0.04em;
+        }
+        .mining-btn-modern:active {
+            background: #232a37;
+            color: #ffd700;
+        }
+        .mining-btn-fixed {
+            position: fixed;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 90px;
+            margin: 0;
+            z-index: 20;
+        }
+        .eye {
+          width: 20px;
+          height: 8px;
+          background-color: rgba(240,220,220,1);
+          border-radius: 0px 0px 20px 20px;
+          position: relative;
+          left: 10px;
+          top: 40px;
+          box-shadow: 40px 0px 0px 0px rgba(240,220,220,1);
+        }
+        .head {
+          backface-visibility: hidden;
+          position: relative;
+          margin: -250px auto;
+          width: 80px;
+          height: 80px;
+          background-color: #111;
+          border-radius: 50px;
+          box-shadow: inset -4px 2px 0px 0px rgba(240,220,220,1);
+          animation: headAnim 1.5s infinite alternate;
+          animation-timing-function: ease-out;
+        }
+        .body {
+          position: relative;
+          margin: 90px auto;
+          width: 140px;
+          height: 120px;
+          background-color: #111;
+          border-radius: 50px/25px;
+          box-shadow: inset -5px 2px 0px 0px rgba(240,220,220,1);
+          animation: bodyAnim 1.5s infinite alternate;
+          animation-timing-function: ease-out;
+        }
+        @keyframes headAnim {
+          0% { top: 0px; }
+          50% { top: 10px; }
+          100% { top: 0px; }
+        }
+        @keyframes bodyAnim {
+          0% { top: -5px; }
+          50% { top: 10px; }
+          100% { top: -5px; }
+        }
+        .circ {
+          margin: 2.2rem auto 1.5rem auto;
+          width: 7.5rem;
+          height: 7.5rem;
+          border-radius: 1rem;
+          position: relative;
+          z-index: 1;
+          left: 0%;
+          top: 0%;
+          overflow: hidden;
+          background: #232a37;
+          box-shadow: none;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .hands {
+          margin-top: 140px;
+          width: 120px;
+          height: 120px;
+          position: absolute;
+          background-color: #111;
+          border-radius: 20px;
+          box-shadow: -1px -4px 0px 0px rgba(240,220,220,1);
+          transform: rotate(45deg);
+          top: 75%;
+          left: 16%;
+          z-index: 1;
+          animation: bodyAnim 1.5s infinite alternate;
+          animation-timing-function: ease-out;
+        }
+        .load {
+          font-size: 1.3rem;
+          margin-top: 0.5em;
+          font-family: 'Julius Sans One', sans-serif;
+          color: #bfc9d8;
+          text-align: center;
+          letter-spacing: 0.08em;
+        }
+        @keyframes fontAnim {
+          0% { width: 7ch; }
+          16% { width: 8ch; }
+          32% { width: 9ch; }
+          48% { width: 10ch; }
+          64% { width: 11ch; }
+          80% { width: 12ch; }
+          100% { width: 13ch; }
+        }
+        @media (max-width: 400px) {
+          .leaderboard-header .trophy-emoji { font-size: 2.5rem; }
+          .leaderboard-title { font-size: 1rem; }
+          .leaderboard-profile-card, .leaderboard-user-block {
+            border-radius: 0.7rem;
+            padding: 0.5rem 0.5rem 0.5rem 0.4rem;
+            min-height: 2.2rem;
+          }
+          .leaderboard-profile-card .avatar, .leaderboard-user-block .avatar, .leaderboard-avatar {
+            width: 1.7rem; height: 1.7rem; border-radius: 0.4rem; margin-right: 0.4rem;
+          }
+          .leaderboard-profile-card .profile-name, .leaderboard-user-block .profile-name, .leaderboard-user-name {
+            font-size: 0.8rem;
+          }
+          .leaderboard-profile-card .profile-id, .leaderboard-user-block .profile-id, .leaderboard-user-balance {
+            font-size: 0.7rem;
+          }
+          .leaderboard-profile-card .profile-rank, .leaderboard-user-block .profile-rank, .leaderboard-user-rank {
+            font-size: 0.8rem; min-width: 1.5rem; margin-left: 0.3rem;
+          }
+          .leaderboard-row {
+            border-radius: 0.4rem;
+            padding: 0.2rem 0.2rem 0.2rem 0.2rem;
+            min-height: 1.2rem;
+            margin-bottom: 0.2rem;
+          }
+          .leaderboard-row .avatar, .leaderboard-row .leaderboard-avatar {
+            width: 1rem; height: 1rem; border-radius: 0.2rem; margin-right: 0.2rem;
+          }
+          .leaderboard-row .profile-name, .leaderboard-row .leaderboard-user-name {
+            font-size: 0.6rem;
+          }
+          .leaderboard-row .profile-id, .leaderboard-row .leaderboard-user-balance {
+            font-size: 0.5rem;
+          }
+          .leaderboard-row .profile-rank, .leaderboard-row .leaderboard-rank {
+            font-size: 0.6rem; min-width: 0.7rem; margin-left: 0.1rem;
+          }
+          .leaderboard-row .medal { font-size: 0.7rem; margin-left: 0.1rem; }
+          .circ { width: 3.5rem; height: 3.5rem; }
+          .load { font-size: 0.7rem; }
+          .mining-btn-modern { font-size: 0.7rem; padding: 0.3rem 0; border-radius: 0.3rem; }
+        }
+        @media (max-width: 340px) {
+          .leaderboard-header .trophy-emoji { font-size: 1.7rem; }
+          .leaderboard-title { font-size: 0.9rem; }
+          .leaderboard-profile-card, .leaderboard-user-block {
+            border-radius: 0.5rem;
+            padding: 0.3rem 0.3rem 0.3rem 0.2rem;
+            min-height: 1.4rem;
+          }
+          .leaderboard-profile-card .avatar, .leaderboard-user-block .avatar, .leaderboard-avatar {
+            width: 1rem; height: 1rem; border-radius: 0.2rem; margin-right: 0.2rem;
+          }
+          .leaderboard-profile-card .profile-name, .leaderboard-user-block .profile-name, .leaderboard-user-name {
+            font-size: 0.6rem;
+          }
+          .leaderboard-profile-card .profile-id, .leaderboard-user-block .profile-id, .leaderboard-user-balance {
+            font-size: 0.5rem;
+          }
+          .leaderboard-profile-card .profile-rank, .leaderboard-user-block .profile-rank, .leaderboard-user-rank {
+            font-size: 0.6rem; min-width: 0.7rem; margin-left: 0.1rem;
+          }
+          .leaderboard-row {
+            border-radius: 0.3rem;
+            padding: 0.2rem 0.2rem 0.2rem 0.2rem;
+            min-height: 0.8rem;
+            margin-bottom: 0.1rem;
+          }
+          .leaderboard-row .avatar, .leaderboard-row .leaderboard-avatar {
+            width: 0.7rem; height: 0.7rem; border-radius: 0.1rem; margin-right: 0.1rem;
+          }
+          .leaderboard-row .profile-name, .leaderboard-row .leaderboard-user-name {
+            font-size: 0.5rem;
+          }
+          .leaderboard-row .profile-id, .leaderboard-row .leaderboard-user-balance {
+            font-size: 0.4rem;
+          }
+          .leaderboard-row .profile-rank, .leaderboard-row .leaderboard-rank {
+            font-size: 0.5rem; min-width: 0.5rem; margin-left: 0.1rem;
+          }
+          .leaderboard-row .medal { font-size: 0.6rem; margin-left: 0.1rem; }
+          .circ { width: 2.5rem; height: 2.5rem; }
+          .load { font-size: 0.5rem; }
+          .mining-btn-modern { font-size: 0.5rem; padding: 0.2rem 0; border-radius: 0.2rem; }
+        }
+        /* Делаю интерфейс на страницах 'Друзья' и 'Рефералы' компактнее и адаптивнее */
+        @media (max-width: 500px) {
+          .friends-title, .referrals-title {
+            font-size: 1.1rem;
+            margin-top: 1.2rem;
+          }
+          .friends-invite-text {
+            font-size: 0.95rem;
+            margin-bottom: 0.7rem;
+          }
+          .referral-link-block, .referral-link-input {
+            font-size: 0.9rem;
+            padding: 0.5rem 0.6rem;
+            border-radius: 0.7rem;
+          }
+          .referral-link-copy, .referral-link-share {
+            font-size: 0.9rem;
+            padding: 0.5rem 0.7rem;
+            border-radius: 0.7rem;
+          }
+          .referrals-list, .referral-item {
+            font-size: 0.9rem;
+            padding: 0.5rem 0.7rem;
+            border-radius: 0.7rem;
+          }
+          .referrals-empty {
+            font-size: 0.9rem;
+            margin: 0.7rem 0;
+          }
+          .friends-invite-link {
+            font-size: 0.9rem;
+            padding: 0.5rem 0.6rem;
+            border-radius: 0.7rem;
+          }
+          .friends-invite-copy {
+            font-size: 0.9rem;
+            padding: 0.5rem 0.7rem;
+            border-radius: 0.7rem;
+          }
+          .friends-invite-share {
+            font-size: 0.9rem;
+            padding: 0.5rem 0.7rem;
+            border-radius: 0.7rem;
+          }
+        }
+        @media (max-width: 400px) {
+          .friends-title, .referrals-title {
+            font-size: 0.95rem;
+            margin-top: 0.7rem;
+          }
+          .friends-invite-text {
+            font-size: 0.8rem;
+            margin-bottom: 0.4rem;
+          }
+          .referral-link-block, .referral-link-input {
+            font-size: 0.7rem;
+            padding: 0.3rem 0.4rem;
+            border-radius: 0.5rem;
+          }
+          .referral-link-copy, .referral-link-share {
+            font-size: 0.7rem;
+            padding: 0.3rem 0.4rem;
+            border-radius: 0.5rem;
+          }
+          .referrals-list, .referral-item {
+            font-size: 0.7rem;
+            padding: 0.3rem 0.4rem;
+            border-radius: 0.5rem;
+          }
+          .referrals-empty {
+            font-size: 0.7rem;
+            margin: 0.4rem 0;
+          }
+          .friends-invite-link {
+            font-size: 0.7rem;
+            padding: 0.3rem 0.4rem;
+            border-radius: 0.5rem;
+          }
+          .friends-invite-copy {
+            font-size: 0.7rem;
+            padding: 0.3rem 0.4rem;
+            border-radius: 0.5rem;
+          }
+          .friends-invite-share {
+            font-size: 0.7rem;
+            padding: 0.3rem 0.4rem;
+            border-radius: 0.5rem;
+          }
+        }
+        /* Кнопка майнинга — делаю ширину и высоту адаптивной */
+        .mining-btn-modern {
+          width: 100%;
+          max-width: 20rem;
+          min-width: 7rem;
+          min-height: 2.2rem;
+          font-size: 1.1rem;
+          padding: 1rem 0;
+          border-radius: 0.88rem;
+        }
+        @media (max-width: 500px) {
+          .mining-btn-modern {
+            font-size: 0.95rem;
+            padding: 0.7rem 0;
+            border-radius: 0.7rem;
+            min-height: 1.5rem;
+          }
+        }
+        @media (max-width: 400px) {
+          .mining-btn-modern {
+            font-size: 0.8rem;
+            padding: 0.5rem 0;
+            border-radius: 0.5rem;
+            min-height: 1.1rem;
+          }
+        }
+        @media (max-width: 360px) {
+          .leaderboard-header .trophy-emoji { font-size: 1.2rem; }
+          .leaderboard-title { font-size: 0.7rem; }
+          .leaderboard-profile-card, .leaderboard-user-block {
+            border-radius: 0.3rem;
+            padding: 0.15rem 0.15rem 0.15rem 0.1rem;
+            min-height: 0.9rem;
+          }
+          .leaderboard-profile-card .avatar, .leaderboard-user-block .avatar, .leaderboard-avatar {
+            width: 0.7rem; height: 0.7rem; border-radius: 0.1rem; margin-right: 0.1rem;
+          }
+          .leaderboard-profile-card .profile-name, .leaderboard-user-block .profile-name, .leaderboard-user-name {
+            font-size: 0.4rem;
+          }
+          .leaderboard-profile-card .profile-id, .leaderboard-user-block .profile-id, .leaderboard-user-balance {
+            font-size: 0.3rem;
+          }
+          .leaderboard-profile-card .profile-rank, .leaderboard-user-block .profile-rank, .leaderboard-user-rank {
+            font-size: 0.4rem; min-width: 0.3rem; margin-left: 0.05rem;
+          }
+          .leaderboard-row {
+            border-radius: 0.1rem;
+            padding: 0.05rem 0.05rem 0.05rem 0.05rem;
+            min-height: 0.4rem;
+            margin-bottom: 0.05rem;
+          }
+          .leaderboard-row .avatar, .leaderboard-row .leaderboard-avatar {
+            width: 0.3rem; height: 0.3rem; border-radius: 0.05rem; margin-right: 0.05rem;
+          }
+          .leaderboard-row .profile-name, .leaderboard-row .leaderboard-user-name {
+            font-size: 0.3rem;
+          }
+          .leaderboard-row .profile-id, .leaderboard-row .leaderboard-user-balance {
+            font-size: 0.2rem;
+          }
+          .leaderboard-row .profile-rank, .leaderboard-row .leaderboard-rank {
+            font-size: 0.3rem; min-width: 0.2rem; margin-left: 0.03rem;
+          }
+          .leaderboard-row .medal { font-size: 0.3rem; margin-left: 0.03rem; }
+          .referral-item, .referrals-list {
+            font-size: 0.4rem;
+            padding: 0.1rem 0.1rem;
+            border-radius: 0.2rem;
+          }
+          .referrals-empty {
+            font-size: 0.3rem;
+            margin: 0.1rem 0;
+          }
+          .friends-title, .referrals-title {
+            font-size: 0.5rem;
+            margin-top: 0.2rem;
+          }
+          .friends-invite-text {
+            font-size: 0.3rem;
+            margin-bottom: 0.1rem;
+          }
+          .referral-link-block, .referral-link-input, .referral-link-copy, .referral-link-share, .friends-invite-link, .friends-invite-copy, .friends-invite-share {
+            font-size: 0.3rem;
+            padding: 0.1rem 0.1rem;
+            border-radius: 0.1rem;
+          }
+        }
+        @media (max-width: 320px) {
+          .leaderboard-header .trophy-emoji { font-size: 0.8rem; }
+          .leaderboard-title { font-size: 0.5rem; }
+          .leaderboard-profile-card, .leaderboard-user-block {
+            border-radius: 0.1rem;
+            padding: 0.05rem 0.05rem 0.05rem 0.03rem;
+            min-height: 0.4rem;
+          }
+          .leaderboard-profile-card .avatar, .leaderboard-user-block .avatar, .leaderboard-avatar {
+            width: 0.3rem; height: 0.3rem; border-radius: 0.03rem; margin-right: 0.03rem;
+          }
+          .leaderboard-profile-card .profile-name, .leaderboard-user-block .profile-name, .leaderboard-user-name {
+            font-size: 0.2rem;
+          }
+          .leaderboard-profile-card .profile-id, .leaderboard-user-block .profile-id, .leaderboard-user-balance {
+            font-size: 0.1rem;
+          }
+          .leaderboard-profile-card .profile-rank, .leaderboard-user-block .profile-rank, .leaderboard-user-rank {
+            font-size: 0.2rem; min-width: 0.1rem; margin-left: 0.01rem;
+          }
+          .leaderboard-row {
+            border-radius: 0.03rem;
+            padding: 0.01rem 0.01rem 0.01rem 0.01rem;
+            min-height: 0.1rem;
+            margin-bottom: 0.01rem;
+          }
+          .leaderboard-row .avatar, .leaderboard-row .leaderboard-avatar {
+            width: 0.1rem; height: 0.1rem; border-radius: 0.01rem; margin-right: 0.01rem;
+          }
+          .leaderboard-row .profile-name, .leaderboard-row .leaderboard-user-name {
+            font-size: 0.1rem;
+          }
+          .leaderboard-row .profile-id, .leaderboard-row .leaderboard-user-balance {
+            font-size: 0.08rem;
+          }
+          .leaderboard-row .profile-rank, .leaderboard-row .leaderboard-rank {
+            font-size: 0.1rem; min-width: 0.05rem; margin-left: 0.01rem;
+          }
+          .leaderboard-row .medal { font-size: 0.1rem; margin-left: 0.01rem; }
+          .referral-item, .referrals-list {
+            font-size: 0.1rem;
+            padding: 0.01rem 0.01rem;
+            border-radius: 0.01rem;
+          }
+          .referrals-empty {
+            font-size: 0.08rem;
+            margin: 0.01rem 0;
+          }
+          .friends-title, .referrals-title {
+            font-size: 0.1rem;
+            margin-top: 0.01rem;
+          }
+          .friends-invite-text {
+            font-size: 0.08rem;
+            margin-bottom: 0.01rem;
+          }
+          .referral-link-block, .referral-link-input, .referral-link-copy, .referral-link-share, .friends-invite-link, .friends-invite-copy, .friends-invite-share {
+            font-size: 0.08rem;
+            padding: 0.01rem 0.01rem;
+            border-radius: 0.01rem;
+          }
+        }
+        /* --- Новый адаптивный стиль для таблицы лидеров под твой референс --- */
+        .leaderboard-header .trophy-emoji {
+          font-size: 2.1rem;
+          margin-bottom: 0.2rem;
+        }
+        .leaderboard-title {
+          font-size: 1.1rem;
+          margin-bottom: 1.1rem;
+        }
+        .leaderboard-profile-card, .leaderboard-user-block, .leaderboard-row {
+          display: flex;
+          align-items: center;
+          background: #23272f;
+          border-radius: 0.9rem;
+          padding: 0.5rem 0.9rem 0.5rem 0.5rem;
+          margin-bottom: 0.7rem;
+          min-height: 3.2rem;
+          box-shadow: 0 1px 6px #0002;
+        }
+        .leaderboard-profile-card .avatar, .leaderboard-user-block .avatar, .leaderboard-avatar, .leaderboard-row .avatar {
+          width: 2.3rem; height: 2.3rem;
+          border-radius: 0.5rem;
+          object-fit: cover;
+          margin-right: 0.7rem;
+          border: 2px solid #7fd7ff;
+        }
+        .leaderboard-user-info, .leaderboard-row .leaderboard-user-info {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+        }
+        .leaderboard-user-name, .leaderboard-row .leaderboard-user-name {
+          font-size: 1rem;
+          font-weight: 700;
+          color: #fff;
+          margin-bottom: 0.1rem;
+          line-height: 1.1;
+        }
+        .leaderboard-user-balance, .leaderboard-row .leaderboard-user-balance {
+          font-size: 1rem;
+          color: #ffd700;
+          font-weight: 700;
+          margin-left: 0.5rem;
+          letter-spacing: 0.01em;
+        }
+        .leaderboard-user-rank, .leaderboard-row .leaderboard-rank {
+          font-size: 1rem;
+          color: #fff;
+          font-weight: 700;
+          margin-left: 0.5rem;
+          min-width: 2.2rem;
+          text-align: right;
+        }
+        .leaderboard-row .medal {
+          font-size: 1.2rem;
+          margin-left: 0.5rem;
+        }
+        .leaderboard-row .medal.gold { color: #ffd700; }
+        .leaderboard-row .medal.silver { color: #bfc9d8; }
+        .leaderboard-row .medal.bronze { color: #e07a3f; }
+        .leaderboard-user-block .leaderboard-user-balance, .leaderboard-profile-card .leaderboard-user-balance {
+          color: #ffd700;
+          font-weight: 700;
+          font-size: 1.1rem;
+          margin-left: 0.5rem;
+        }
+        .leaderboard-user-block .leaderboard-user-rank, .leaderboard-profile-card .leaderboard-user-rank {
+          color: #fff;
+          font-weight: 700;
+          font-size: 1.1rem;
+          margin-left: 0.5rem;
+        }
+        .leaderboard-user-block .medal, .leaderboard-profile-card .medal {
+          font-size: 1.2rem;
+          margin-left: 0.5rem;
+        }
+        .leaderboard-user-info .profile-id, .leaderboard-row .profile-id, .leaderboard-user-info .leaderboard-user-id {
+          font-size: 0.9rem;
+          color: #7fd7ff;
+          font-weight: 600;
+          margin-top: 0.1rem;
+        }
+        @media (max-width: 500px) {
+          .leaderboard-header .trophy-emoji { font-size: 1.3rem; }
+          .leaderboard-title { font-size: 0.9rem; }
+          .leaderboard-profile-card, .leaderboard-user-block, .leaderboard-row {
+            border-radius: 0.5rem;
+            padding: 0.3rem 0.5rem 0.3rem 0.3rem;
+            margin-bottom: 0.4rem;
+            min-height: 2.1rem;
+          }
+          .leaderboard-profile-card .avatar, .leaderboard-user-block .avatar, .leaderboard-avatar, .leaderboard-row .avatar {
+            width: 1.3rem; height: 1.3rem; border-radius: 0.3rem; margin-right: 0.3rem;
+          }
+          .leaderboard-user-name, .leaderboard-row .leaderboard-user-name {
+            font-size: 0.7rem;
+          }
+          .leaderboard-user-balance, .leaderboard-row .leaderboard-user-balance {
+            font-size: 0.7rem;
+            margin-left: 0.2rem;
+          }
+          .leaderboard-user-rank, .leaderboard-row .leaderboard-rank {
+            font-size: 0.7rem;
+            margin-left: 0.2rem;
+            min-width: 1.1rem;
+          }
+          .leaderboard-row .medal {
+            font-size: 0.8rem;
+            margin-left: 0.2rem;
+          }
+          .leaderboard-user-info .profile-id, .leaderboard-row .profile-id, .leaderboard-user-info .leaderboard-user-id {
+            font-size: 0.6rem;
+            margin-top: 0.05rem;
+          }
+        }
+        @media (max-width: 340px) {
+          .leaderboard-header .trophy-emoji { font-size: 0.9rem; }
+          .leaderboard-title { font-size: 0.6rem; }
+          .leaderboard-profile-card, .leaderboard-user-block, .leaderboard-row {
+            border-radius: 0.2rem;
+            padding: 0.1rem 0.2rem 0.1rem 0.1rem;
+            margin-bottom: 0.1rem;
+            min-height: 1.1rem;
+          }
+          .leaderboard-profile-card .avatar, .leaderboard-user-block .avatar, .leaderboard-avatar, .leaderboard-row .avatar {
+            width: 0.7rem; height: 0.7rem; border-radius: 0.1rem; margin-right: 0.1rem;
+          }
+          .leaderboard-user-name, .leaderboard-row .leaderboard-user-name {
+            font-size: 0.4rem;
+          }
+          .leaderboard-user-balance, .leaderboard-row .leaderboard-user-balance {
+            font-size: 0.4rem;
+            margin-left: 0.1rem;
+          }
+          .leaderboard-user-rank, .leaderboard-row .leaderboard-rank {
+            font-size: 0.4rem;
+            margin-left: 0.1rem;
+            min-width: 0.5rem;
+          }
+          .leaderboard-row .medal {
+            font-size: 0.5rem;
+            margin-left: 0.1rem;
+          }
+          .leaderboard-user-info .profile-id, .leaderboard-row .profile-id, .leaderboard-user-info .leaderboard-user-id {
+            font-size: 0.3rem;
+            margin-top: 0.02rem;
+          }
+        }
+        body, .balance-amount, .balance-currency, .leaderboard-user-name, .leaderboard-user-balance, .leaderboard-title, .mining-btn-modern, .navbar, .profile-name, .profile-id, .referral-link, .referrals-title, .referrals-list, .referral-item, .friends-title, .friends-invite-text, .tasks-title, .tasks-empty {
+          font-family: 'Press Start 2P', 'VT323', monospace !important;
+          letter-spacing: 0.03em;
+        }
+        .balance-amount, .balance-currency {
+          color: #fff !important;
+          text-shadow: none !important;
+        }
+        .leaderboard-header {
+            text-align: center;
+            margin-top: 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .trophy-emoji {
+            font-size: 2.1rem;
+            margin-bottom: 0.2rem;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .leaderboard-title {
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1.1rem;
+            margin-top: 0.2rem;
+            text-align: center;
+        }
+        .referrals-title, .friends-title, .tasks-title {
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+        }
+        .friends-emoji, .tasks-emoji {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+        }
+        .referrals-title {
+            margin-top: 1.2rem;
+            margin-bottom: 0.7rem;
+        }
+        /* Friends/Referrals modern buttons */
+        .referral-link-row {
+            display: flex;
+            width: 100%;
+            margin-bottom: 10px;
+            gap: 7px;
+            flex-direction: row;
+        }
+        .referral-link {
+            flex: 1;
+            border: 2px solid #7fd7ff;
+            border-radius: 12px;
+            padding: 10px 12px;
+            font-size: 1em;
+            background: #181f2a;
+            color: #fff;
+            outline: none;
+            transition: border 0.2s, box-shadow 0.2s;
+            text-align: center;
+            font-family: inherit;
+            word-break: break-all;
+            white-space: normal;
+            height: auto;
+            min-height: 38px;
+            display: block;
+        }
+        .referral-link:focus {
+            border-color: #ffd700;
+            box-shadow: 0 0 0 2px #ffd70044;
+        }
+        .copy-btn {
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #7fd7ff 0%, #4B9CE2 100%);
+            color: #fff;
+            font-size: 1.2em;
+            padding: 0 18px;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 8px #7fd7ff33;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .copy-btn:hover, .copy-btn:focus {
+            background: linear-gradient(135deg, #4B9CE2 0%, #7fd7ff 100%);
+            color: #ffd700;
+            box-shadow: 0 4px 16px #4B9CE244;
+        }
+        .share-btn {
+            width: 100%;
+            margin-top: 14px;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #4B9CE2 0%, #7fd7ff 100%);
+            color: #fff;
+            font-size: 1.05em;
+            font-weight: 700;
+            padding: 12px 0;
+            cursor: pointer;
+            box-shadow: 0 2px 12px #4B9CE233;
+            transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+            display: block;
+            text-align: center;
+            letter-spacing: 0.01em;
+        }
+        .share-btn:hover, .share-btn:focus {
+            background: linear-gradient(135deg, #7fd7ff 0%, #4B9CE2 100%);
+            color: #ffd700;
+            box-shadow: 0 4px 16px #7fd7ff44;
+        }
+        @media (max-width: 500px) {
+            .referral-link-row {
+                flex-direction: column;
+                gap: 7px;
+            }
+            .copy-btn, .referral-link {
+                width: 100%;
+                font-size: 1em;
+                border-radius: 12px;
+            }
+            .share-btn {
+                width: 100%;
+                font-size: 1em;
+                border-radius: 14px;
+            }
+        }
+        .referral-link-row {
+            gap: 5px;
+        }
+        .referral-link {
+            padding: 6px 8px;
+            font-size: 0.92em;
+            border-radius: 8px;
+            min-height: 28px;
+        }
+        .copy-btn {
+            border-radius: 8px;
+            font-size: 1em;
+            padding: 0 10px;
+        }
+        .copy-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+        @media (max-width: 500px) {
+            .referral-link {
+                font-size: 0.88em;
+                padding: 5px 6px;
+                border-radius: 7px;
+                min-height: 22px;
+            }
+            .copy-btn {
+                font-size: 0.95em;
+                border-radius: 7px;
+                padding: 0 7px;
+            }
+            .copy-btn svg {
+                width: 15px;
+                height: 15px;
+            }
+        }
+        .leaderboard-profile-card.gold {
+            box-shadow: 0 0 16px 0 #ffd700cc, 0 2px 12px #0002;
+            border: 2px solid #ffd700;
+            background: linear-gradient(90deg, #23272f 60%, #ffd70022 100%);
+        }
+        .leaderboard-profile-card.silver {
+            box-shadow: 0 0 16px 0 #bfc9d8cc, 0 2px 12px #0002;
+            border: 2px solid #bfc9d8;
+            background: linear-gradient(90deg, #23272f 60%, #bfc9d822 100%);
+        }
+        .leaderboard-profile-card.bronze {
+            box-shadow: 0 0 16px 0 #e07a3fcc, 0 2px 12px #0002;
+            border: 2px solid #e07a3f;
+            background: linear-gradient(90deg, #23272f 60%, #e07a3f22 100%);
+        }
+        .referral-block {
+            max-width: 370px;
+            width: 98vw;
+            margin: 0 auto 18px auto;
+            box-sizing: border-box;
+        }
+        /* --- Магазин карточек профиля --- */
+        .shop-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 32px 0 0 0;
+        }
+        .shop-title {
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1.2rem;
+            text-align: center;
+        }
+        .shop-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 1.5rem;
+            justify-content: center;
+        }
+        .shop-tab {
+            background: linear-gradient(135deg, #23272f 0%, #2c313a 100%);
+            border: 2px solid rgba(75, 156, 226, 0.2);
+            border-radius: 12px;
+            padding: 10px 20px;
+            color: #7a8599;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .shop-tab:hover {
+            border-color: rgba(75, 156, 226, 0.4);
+            color: #fff;
+        }
+        .shop-tab.active {
+            background: linear-gradient(135deg, #4B9CE2 0%, #7fd7ff 100%);
+            border-color: rgba(75, 156, 226, 0.6);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(75, 156, 226, 0.3);
+        }
+        .shop-section {
+            width: 100%;
+        }
+        .shop-cards-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            justify-content: center;
+            margin-bottom: 2.5rem;
+        }
+        .shop-card {
+            background: #23272f;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px #0002;
+            width: 140px;
+            padding: 16px 10px 14px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            border: 2px solid transparent;
+            transition: box-shadow 0.2s, border 0.2s;
+        }
+        .shop-card.owned {
+            border: 2px solid #7fd7ff;
+            box-shadow: 0 0 12px #7fd7ff55;
+            opacity: 0.85;
+        }
+        .shop-card .shop-card-img {
+            width: 100px;
+            height: 60px;
+            border-radius: 10px;
+            object-fit: cover;
+            margin-bottom: 10px;
+            background: #181f2a;
+            border: 1.5px solid #333;
+        }
+        .shop-card .shop-card-name {
+            font-size: 1em;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 6px;
+            text-align: center;
+        }
+        .shop-card .shop-card-price {
+            font-size: 0.95em;
+            color: #ffd700;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .shop-card .shop-card-btn {
+            width: 100%;
+            padding: 8px 0;
+            border-radius: 8px;
+            border: none;
+            font-size: 0.95em;
+            font-weight: 700;
+            background: linear-gradient(90deg, #4B9CE2 0%, #7fd7ff 100%);
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            margin-top: 2px;
+        }
+        .shop-card .shop-card-btn:disabled {
+            background: #444;
+            color: #aaa;
+            cursor: not-allowed;
+        }
+        .shop-card .shop-card-btn.owned {
+            background: #23272f;
+            color: #7fd7ff;
+            border: 1.5px solid #7fd7ff;
+            cursor: default;
+        }
+        @media (max-width: 500px) {
+            .shop-cards-grid { gap: 10px; }
+            .shop-card { width: 110px; padding: 10px 4px 10px 4px; }
+            .shop-card .shop-card-img { width: 70px; height: 40px; }
+            .shop-tabs { gap: 6px; }
+            .shop-tab { padding: 8px 16px; font-size: 0.9rem; }
+        }
+        /* --- Апгрейды майнера --- */
+        .upgrades-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto 2.5rem auto;
+        }
+        .upgrade-card {
+            background: linear-gradient(135deg, #23272f 0%, #2c313a 100%);
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+            padding: 12px;
+            border: 1px solid rgba(75, 156, 226, 0.1);
+            transition: all 0.3s ease;
+        }
+        .upgrade-card:hover {
+            border-color: rgba(75, 156, 226, 0.3);
+            box-shadow: 0 6px 25px rgba(75, 156, 226, 0.2);
+        }
+        .upgrade-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .upgrade-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #fff;
+        }
+        .upgrade-level {
+            background: linear-gradient(135deg, #4B9CE2 0%, #7fd7ff 100%);
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        .upgrade-desc {
+            color: #7a8599;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+            line-height: 1.3;
+        }
+        .upgrade-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .upgrade-effect {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .upgrade-effect-value {
+            background: rgba(127, 215, 255, 0.1);
+            color: #7fd7ff;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        .upgrade-price {
+            color: #ffd700;
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+        .upgrade-btn {
+            width: 100%;
+            padding: 8px 0;
+            border-radius: 8px;
+            border: none;
+            font-size: 0.85rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #4B9CE2 0%, #7fd7ff 100%);
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .upgrade-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(75, 156, 226, 0.4);
+        }
+        .upgrade-btn:disabled {
+            background: #444;
+            color: #aaa;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        @media (max-width: 500px) {
+            .upgrades-grid { gap: 8px; }
+            .upgrade-card { padding: 10px; }
+            .upgrade-title { font-size: 0.9rem; }
+            .upgrade-desc { font-size: 0.8rem; }
+            .upgrade-btn { font-size: 0.8rem; padding: 6px 0; }
+        }
+        
+        /* Game Styles */
+        .game-content {
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .game-header {
+            margin-bottom: 20px;
+        }
+        
+        .game-emoji {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+        
+        .game-title {
+            font-size: 1.5rem;
+            color: #fff;
+            margin: 10px 0;
+            font-weight: 700;
+        }
+        
+        .game-subtitle {
+            color: #7a8599;
+            font-size: 1rem;
+            margin-top: 10px;
+        }
+        
+        /* Whack-A-Mole Game Styles */
+        .whack-game {
+            margin: 0 auto;
+            max-width: 340px;
+            width: 100%;
+        }
+        .game-board {
+            width: 100%;
+            height: 320px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 12px;
+            background: #23272f;
+            border-radius: 18px;
+            box-shadow: 0 4px 32px #000a 0.5;
+            padding: 16px;
+            position: relative;
+        }
+        @media (max-width: 500px) {
+            .game-board { height: 220px; padding: 8px; gap: 6px; }
+            .whack-game { max-width: 100vw; }
+        }
+        .hole {
+            background: #181c24;
+            border-radius: 50%;
+            box-shadow: 0 2px 12px #0008;
+            position: relative;
+            overflow: visible;
+            aspect-ratio: 1/1;
+            cursor: pointer;
+            transition: box-shadow 0.2s;
+        }
+        .hole.up { box-shadow: 0 0 0 2px #4B9CE2, 0 2px 12px #000a; }
+        .hole:active { box-shadow: 0 0 0 2px #ffd700, 0 2px 12px #000a; }
+        .mole {
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            width: 70%;
+            aspect-ratio: 1/1;
+            background: none;
+            border-radius: 50%;
+            transform: translate(-50%, 80%) scale(0.7);
+            transition: transform 0.18s cubic-bezier(.4,0,.2,1);
+            z-index: 2;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+        }
+        .hole.up .mole {
+            transform: translate(-50%, 0) scale(1.05);
+            animation: molePop 0.18s;
+        }
+        @keyframes molePop {
+            0% { transform: translate(-50%, 120%) scale(0.5); }
+            100% { transform: translate(-50%, 0) scale(1.05); }
+        }
+        .mole svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        .hole.hit .mole svg .mole-face {
+            filter: brightness(1.2) drop-shadow(0 0 8px #ffd700);
+        }
+        .mole::after {
+            content: '';
+         }
+        .hole.hit .mole {
+            background: radial-gradient(circle at 60% 40%, #ffd700 0%, #4B9CE2 100%);
+            animation: hitAnimation 0.3s;
+        }
+        @keyframes hitAnimation {
+            0% { transform: translate(-50%, 0) scale(1.1); }
+            50% { transform: translate(-50%, 0) scale(0.7); }
+            100% { transform: translate(-50%, 0) scale(1.05); }
+        }
+        .score-popup {
+            position: absolute;
+            left: 50%;
+            top: 10%;
+            transform: translate(-50%, 0);
+            color: #ffd700;
+            font-weight: bold;
+            font-size: 1.3rem;
+            pointer-events: none;
+            z-index: 1000;
+            text-shadow: 0 0 12px #ffd700, 0 0 32px #fff;
+            animation: scorePopup 0.9s cubic-bezier(.4,0,.2,1) forwards;
+        }
+        @keyframes scorePopup {
+            0% { opacity: 1; transform: translate(-50%, 0) scale(1.1); }
+            80% { opacity: 1; }
+            100% { opacity: 0; transform: translate(-50%, -40px) scale(1.3); }
+        }
+        .game-header {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .game-emoji {
+            font-size: 2.2rem;
+            margin-bottom: 2px;
+        }
+        .game-title {
+            font-size: 1.3rem;
+            color: #fff;
+            margin: 0 0 2px 0;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+        .game-stats {
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+            margin: 0 0 8px 0;
+        }
+        .game-stat {
+            background: #23272f;
+            border-radius: 8px;
+            padding: 4px 10px;
+            color: #4B9CE2;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+        .stat-label { color: #7a8599; font-size: 0.85rem; font-weight: 400; }
+        .stat-value { color: #ffd700; font-size: 1.05rem; font-weight: 700; }
+        .game-hud {
+            margin-bottom: 8px;
+        }
+        .hud-top {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0;
+            padding: 8px 10px;
+            background: #23272f;
+            border-radius: 10px;
+        }
+        .hud-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .hud-label {
+            font-size: 0.8rem;
+            color: #7a8599;
+        }
+        .hud-value {
+            font-size: 1.1rem;
+            color: #ffd700;
+            font-weight: 700;
+        }
+        .game-start-btn, .game-restart-btn {
+            background: linear-gradient(90deg, #4B9CE2 0%, #23272f 100%);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 36px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin: 18px 0 0 0;
+            box-shadow: 0 2px 12px #4B9CE2aa;
+            transition: all 0.2s;
+        }
+        .game-start-btn:hover, .game-restart-btn:hover {
+            background: linear-gradient(90deg, #23272f 0%, #4B9CE2 100%);
+            color: #ffd700;
+            box-shadow: 0 4px 24px #4B9CE2cc;
+        }
+        .game-over-screen {
+            background: #23272f;
+            border-radius: 16px;
+            padding: 30px 20px;
+            border: 1px solid #4B9CE2;
+            margin-top: 18px;
+        }
+        .game-over-screen h3 {
+            color: #ffd700;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+        .game-score, .game-reward {
+            margin: 10px 0;
+            font-size: 1.1rem;
+        }
+        .game-score span:first-child, .game-reward span:first-child {
+            color: #7a8599;
+        }
+        .game-score span:last-child, .game-reward span:last-child {
+            color: #ffd700;
+            font-weight: 700;
+        }
+        .game-stats-summary {
+            margin: 18px 0 0 0;
+            padding: 12px;
+            background: #181c24;
+            border-radius: 10px;
+        }
+        .stat-summary {
+            display: flex;
+            justify-content: space-between;
+            margin: 6px 0;
+            font-size: 0.95rem;
+        }
+        .stat-summary span:first-child {
+            color: #7a8599;
+        }
+        .stat-summary span:last-child {
+            color: #ffd700;
+            font-weight: 600;
+        }
+        
+        .game-container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .game-start-screen {
+            background: linear-gradient(135deg, #23272f 0%, #2c313a 100%);
+            border-radius: 16px;
+            padding: 30px 20px;
+            border: 1px solid rgba(75, 156, 226, 0.2);
+        }
+        
+        .game-instructions {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+        
+        .game-instructions h3 {
+            color: #ffd700;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .game-instructions p {
+            color: #ccc;
+            margin: 8px 0;
+            font-size: 0.9rem;
+        }
+        
+
+        
+        .game-start-btn, .game-restart-btn {
+            background: linear-gradient(135deg, #4B9CE2 0%, #8841D5 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(75, 156, 226, 0.3);
+        }
+        
+        .game-start-btn:hover, .game-restart-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(75, 156, 226, 0.4);
+        }
+        
+        .game-over-screen {
+            background: linear-gradient(135deg, #23272f 0%, #2c313a 100%);
+            border-radius: 16px;
+            padding: 30px 20px;
+            border: 1px solid rgba(75, 156, 226, 0.2);
+        }
+        
+        .game-over-screen h3 {
+            color: #ffd700;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+        
+        .game-score, .game-reward {
+            margin: 15px 0;
+            font-size: 1.1rem;
+        }
+        
+        .game-score span:first-child, .game-reward span:first-child {
+            color: #7a8599;
+        }
+        
+        .game-score span:last-child, .game-reward span:last-child {
+            color: #ffd700;
+            font-weight: 700;
+        }
+        
+        .profile-wallet-container {
+          max-width: 100vw;
+          margin: 0 auto;
+          padding: 0 0 32px 0;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+        .profile-wallet-card {
+          position: relative;
+          width: 90vw;
+          max-width: 320px;
+          margin: 24px auto 18px auto;
+          border-radius: 24px;
+          box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+          background: #23272f;
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: 0 0 10px 0;
+        }
+        .profile-wallet-avatar {
+          width: 64px; height: 64px;
+          border-radius: 16px;
+          background: #181f2a;
+          margin-bottom: 10px;
+          display: flex; align-items: center; justify-content: center;
+          font-size: 2.2em;
+          color: #7fd7ff;
+          border: 2px solid #7fd7ff;
+          overflow: hidden;
+        }
+        .profile-wallet-avatar img {
+          width: 100%; height: 100%; object-fit: cover; border-radius: 16px;
+        }
+        .profile-info-modern {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          width: 100%;
+        }
+        .profile-name-modern {
+          font-size: 1.13em;
+          font-weight: 700;
+          color: #fff;
+          margin-bottom: 2px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          text-align: center;
+        }
+        .profile-id-modern {
+          color: #7a8599;
+          font-size: 0.97em;
+          margin-bottom: 6px;
+          word-break: break-all;
+          text-align: center;
+        }
+        .profile-balance-modern {
+          text-align: right;
+          color: #ffd700;
+          font-size: 1.13em;
+          font-weight: 600;
+          letter-spacing: 0.5px;
+          width: 100%;
+          padding: 0 18px 8px 0;
+          z-index: 1;
+        }
+        @media (max-width: 600px) {
+          .profile-card-modern {
+            max-width: 98vw;
+            margin: 14px auto 10px auto;
+            border-radius: 18px;
+            padding: 0 0 6px 0;
+          }
+          .profile-card-row { padding: 12px 0 0 0; }
+          .profile-avatar-modern { width: 54px; height: 54px; margin-bottom: 7px; }
+          .profile-balance-modern { padding: 0 8px 6px 0; font-size: 1em; }
+        }
+        .profile-action-row {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 22px;
+          margin: 16px 0 0 0;
+          padding: 0;
+        }
+        .profile-action-btn {
+          width: 64px;
+          height: 64px;
+          border-radius: 50%;
+          background: #111;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: none;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+          cursor: pointer;
+          transition: box-shadow 0.2s, background 0.2s, transform 0.1s;
+          outline: none;
+          padding: 0;
+        }
+        .profile-action-btn svg {
+          display: block;
+        }
+        .profile-action-btn:hover, .profile-action-btn:active {
+          background: #222;
+          box-shadow: 0 4px 16px rgba(75,156,226,0.18);
+          transform: scale(1.07);
+        }
+        .profile-wallet-settings {
+          background: #23272f;
+          border-radius: 16px;
+          padding: 18px 14px 10px 14px;
+          margin-top: 8px;
+          width: 100%;
+          box-sizing: border-box;
+        }
+        .profile-wallet-setting-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 14px;
+          font-size: 1.05em;
+        }
+        .profile-wallet-setting-row:last-child { margin-bottom: 0; }
+        .switch {
+          position: relative;
+          display: inline-block;
+          width: 44px;
+          height: 24px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0; left: 0; right: 0; bottom: 0;
+          background: #7a8599;
+          border-radius: 24px;
+          transition: .4s;
+        }
+        .slider:before {
+          position: absolute;
+          content: "";
+          height: 18px;
+          width: 18px;
+          left: 3px;
+          bottom: 3px;
+          background: #fff;
+          border-radius: 50%;
+          transition: .4s;
+        }
+        input:checked + .slider {
+          background: #4B9CE2;
+        }
+        input:checked + .slider:before {
+          transform: translateX(20px);
+        }
+        @media (max-width: 600px) {
+          .profile-wallet-container { padding: 12px 2px 24px 2px; }
+          .profile-card-modern { max-width: 100%; }
+          .profile-card-row { flex-direction: column; align-items: flex-start; padding: 18px 8px 8px 8px; }
+          .profile-avatar-modern { margin-right: 0; margin-bottom: 10px; }
+          .profile-balance-modern { padding: 0 8px 12px 0; }
+          .profile-action-row { gap: 10px; margin-bottom: 16px; }
+          .profile-action-btn { width: 54px; height: 54px; }
+          .profile-wallet-settings { padding: 10px 6px; }
+        }
+        .modal {
+          display: none;
+          position: fixed;
+          z-index: 1000;
+          left: 0; top: 0; width: 100vw; height: 100vh;
+          background: rgba(10,18,28,0.75);
+          align-items: center;
+          justify-content: center;
+          animation: modalFadeIn 0.22s;
+        }
+        @keyframes modalFadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        .modal-content {
+          background: linear-gradient(135deg, #262b36 0%, #31384a 100%);
+          border-radius: 24px;
+          padding: 20px 10px 16px 10px;
+          min-width: 0;
+          max-width: 340px;
+          width: 96vw;
+          box-shadow: 0 6px 32px 0 #000a, 0 2px 12px #0002;
+          color: #fff;
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          animation: modalPopIn 0.18s;
+        }
+        @keyframes modalPopIn {
+          from { transform: scale(0.97); opacity: 0; }
+          to { transform: scale(1); opacity: 1; }
+        }
+        .close {
+          position: absolute;
+          right: 12px;
+          top: 10px;
+          font-size: 1.3em;
+          color: #7fd7ff;
+          cursor: pointer;
+          transition: color 0.2s;
+        }
+        .close:hover { color: #ffd700; }
+        .modal-title {
+          font-size: 1.12em;
+          font-weight: 700;
+          margin-bottom: 12px;
+          letter-spacing: 0.5px;
+          text-align: center;
+        }
+        .receive-id-row {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 12px;
+          gap: 8px;
+        }
+        .receive-id {
+          font-size: 1em;
+          color: #7fd7ff;
+          background: #181f2a;
+          border-radius: 7px;
+          padding: 5px 10px;
+          user-select: all;
+        }
+        .copy-btn {
+          background: #111;
+          color: #fff;
+          border: none;
+          border-radius: 7px;
+          padding: 6px 10px;
+          font-size: 0.98em;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          transition: background 0.2s;
+        }
+        .copy-btn.copied { background: #4B9CE2; color: #fff; }
+        .copy-btn svg { width: 16px; height: 16px; }
+        .receive-qr {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 8px;
+          background: #181f2a;
+          border-radius: 12px;
+          padding: 7px;
+          box-shadow: 0 1px 6px #0003;
+        }
+        .receive-qr img { width: 120px; height: 120px; }
+        .receive-tip {
+          color: #7a8599;
+          font-size: 0.95em;
+          text-align: center;
+          margin-bottom: 4px;
+        }
+        .send-form {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          margin-bottom: 4px;
+        }
+        .send-input {
+          width: 100%;
+          padding: 9px 10px;
+          border-radius: 8px;
+          border: 1.2px solid #4B9CE2;
+          background: #181f2a;
+          color: #fff;
+          font-size: 0.98em;
+          outline: none;
+          transition: border 0.2s;
+        }
+        .send-input:focus { border: 1.2px solid #ffd700; }
+        .send-btn {
+          width: 100%;
+          padding: 10px 0;
+          border-radius: 10px;
+          background: linear-gradient(135deg, #4B9CE2 0%, #8841D5 100%);
+          color: #fff;
+          font-size: 1em;
+          font-weight: 600;
+          border: none;
+          cursor: pointer;
+          transition: background 0.2s, box-shadow 0.2s;
+          box-shadow: 0 1px 6px rgba(75,156,226,0.10);
+        }
+        .send-btn:disabled { background: #444; color: #aaa; cursor: not-allowed; }
+        .send-warning {
+          color: #e07a3f;
+          font-size: 0.95em;
+          margin-top: 4px;
+          text-align: center;
+        }
+        .history-list {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          gap: 7px;
+          margin-bottom: 7px;
+        }
+        .history-item {
+          background: #181f2a;
+          border-radius: 10px;
+          padding: 8px 10px;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          box-shadow: 0 1px 4px #0002;
+          font-size: 0.98em;
+        }
+        .history-icon-in {
+          color: #4B9CE2;
+          font-size: 1.1em;
+        }
+        .history-icon-out {
+          color: #e07a3f;
+          font-size: 1.1em;
+        }
+        .history-main {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 1px;
+        }
+        .history-amount-in { color: #4B9CE2; font-weight: 600; }
+        .history-amount-out { color: #e07a3f; font-weight: 600; }
+        .history-peer { color: #7fd7ff; font-size: 0.95em; }
+        .history-date { color: #7a8599; font-size: 0.93em; }
+        .history-pagination {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-top: 7px;
+          gap: 6px;
+        }
+        .history-pagination button {
+          background: #23272f;
+          color: #7fd7ff;
+          border: none;
+          border-radius: 7px;
+          font-size: 1em;
+          padding: 2px 8px;
+          margin: 0 1px;
+          cursor: pointer;
+          transition: background 0.2s;
+        }
+        .history-pagination button:disabled {
+          opacity: 0.5;
+          cursor: default;
+        }
+        @media (max-width: 600px) {
+          .modal-content { min-width: 0; width: 98vw; max-width: 99vw; padding: 10px 2vw 8px 2vw; }
+          .receive-qr { padding: 3px; }
+          .receive-qr img { width: 90px; height: 90px; }
+          .send-input { padding: 7px 6px; font-size: 0.95em; }
+          .send-btn { padding: 8px 0; font-size: 0.97em; }
+        }
+        .profile-card .avatar {
+          width: 34px;
+          height: 34px;
+          border-radius: 10px;
+          margin-right: 12px;
+          overflow: hidden;
+          background: #181f2a;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 2px solid #7fd7ff;
+          font-size: 1.1em;
+          color: #7fd7ff;
+        }
+        .profile-card .avatar img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          border-radius: 10px;
+          display: block;
+        }
+        .profile-coin-shelf {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          background: linear-gradient(135deg, #23272f 0%, #2c313a 100%);
+          border-radius: 18px;
+          box-shadow: 0 2px 12px rgba(0,0,0,0.13);
+          padding: 10px 18px 10px 10px;
+          margin: 18px auto 0 auto;
+          max-width: 340px;
+          width: 92vw;
+          min-height: 54px;
+          position: relative;
+        }
+        .coin-icon-wrap {
+          width: 38px; height: 38px;
+          border-radius: 50%;
+          background: #fff;
+          display: flex; align-items: center; justify-content: center;
+          box-shadow: 0 1px 6px #0002;
+          margin-right: 12px;
+          flex-shrink: 0;
+        }
+        .coin-icon {
+          width: 32px; height: 32px;
+          border-radius: 50%;
+          display: block;
+        }
+        .coin-name {
+          flex: 1;
+          text-align: left;
+          font-size: 1.13em;
+          font-weight: 600;
+          color: #7fd7ff;
+          letter-spacing: 0.04em;
+          margin-left: 2px;
+        }
+        .coin-balance {
+          font-size: 1.13em;
+          font-weight: 700;
+          color: #ffd700;
+          letter-spacing: 0.04em;
+          margin-left: 10px;
+          text-align: right;
+          min-width: 70px;
+        }
+        @media (max-width: 600px) {
+          .profile-coin-shelf { max-width: 99vw; padding: 7px 8px 7px 7px; }
+          .coin-icon-wrap { width: 32px; height: 32px; margin-right: 7px; }
+          .coin-icon { width: 26px; height: 26px; }
+          .coin-name, .coin-balance { font-size: 1em; }
+          .coin-balance { min-width: 50px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="preloader" style="position:fixed;z-index:9999;top:0;left:0;width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+      <div class="starry-bg">
+        <div class="stars">
+          <div class="star"></div>
+          <div class="star"></div>
+          <div class="star"></div>
+          <div class="star"></div>
+          <div class="star"></div>
+          <div class="star"></div>
+          <div class="star"></div>
+          <div class="star"></div>
+          <div class="star"></div>
+          <div class="star"></div>
+        </div>
+      </div>
+      <!-- From Uiverse.io by SouravBandyopadhyay --> 
+      <div class="hourglassBackground">
+        <div class="hourglassContainer">
+          <div class="hourglassCurves"></div>
+          <div class="hourglassCapTop"></div>
+          <div class="hourglassGlassTop"></div>
+          <div class="hourglassSand"></div>
+          <div class="hourglassSandStream"></div>
+          <div class="hourglassCapBottom"></div>
+          <div class="hourglassGlass"></div>
+        </div>
+      </div>
+    </div>
+    <div class="app-wrapper" style="position:relative;z-index:1;">
+      <div class="starry-bg" style="position:fixed;z-index:-1;top:0;left:0;width:100vw;height:100vh;">
+        <div class="stars">
+          <div class="star"></div>
+          <div class="star"></div>
+          <div class="star"></div>
+          <div class="star"></div>
+          <div class="star"></div>
+          <div class="star"></div>
+          <div class="star"></div>
+          <div class="star"></div>
+          <div class="star"></div>
+          <div class="star"></div>
+        </div>
+      </div>
+      <div class="header">
+          <div class="profile-row">
+              <div class="avatar" id="avatar"></div>
+              <div class="profile-info">
+                  <div class="profile-name" id="profileName"></div>
+                  <div class="profile-id" id="profileId"></div>
+              </div>
+          </div>
+          <!-- From Uiverse.io by thomas-m-njuguna --> 
+          <div class="btn-cont">
+              <button class="button" onclick="openSettings()">
+                  <svg
+                      class="settings-btn"
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="24"
+                      viewBox="0 -960 960 960"
+                      width="24"
+                  >
+                      <path
+                          d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z"
+                      ></path>
+                  </svg>
+                  <span class="tooltip">Настройки</span>
+              </button>
+          </div>
+      </div>
+      <div class="main-content-area">
+        <div class="page" id="page-home" style="display:none;">
+            <div class="balance-display" style="margin-top:48px;">
+                <div class="balance-amount">0</div>
+                <div class="balance-currency">SAB</div>
+                <div id="wingsSvgContainer" style="width:170px;margin:0 auto;display:none;">
+                  <svg id="wingsSvg" viewBox="0 0 340 90" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+                    <!-- Left wing -->
+                    <path d="M15,80 Q35,50 75,70 Q45,40 95,50 Q65,30 115,40 Q85,20 135,30 Q105,10 155,20" stroke="#fff" stroke-width="2.7" fill="none"/>
+                    <path d="M35,75 Q55,55 85,67" stroke="#fff" stroke-width="1.7" fill="none"/>
+                    <path d="M55,72 Q73,62 105,66" stroke="#fff" stroke-width="1.3" fill="none"/>
+                    <path d="M75,69 Q93,59 125,63" stroke="#fff" stroke-width="1.1" fill="none"/>
+                    <!-- Right wing -->
+                    <path d="M325,80 Q305,50 265,70 Q295,40 245,50 Q275,30 225,40 Q255,20 205,30 Q235,10 185,20" stroke="#fff" stroke-width="2.7" fill="none"/>
+                    <path d="M305,75 Q285,55 255,67" stroke="#fff" stroke-width="1.7" fill="none"/>
+                    <path d="M285,72 Q267,62 235,66" stroke="#fff" stroke-width="1.3" fill="none"/>
+                    <path d="M265,69 Q247,59 215,63" stroke="#fff" stroke-width="1.1" fill="none"/>
+                    <!-- Center rank -->
+                    <text id="wingsRank" x="170" y="54" text-anchor="middle" fill="#ffd700" font-size="38" font-family="'Press Start 2P', 'VT323', monospace">🥇</text>
+                  </svg>
+                </div>
+                <div id="miningAnimationBox" style="width:260px;height:260px;max-width:90vw;max-height:40vw;margin:32px auto 0 auto;display:flex;align-items:center;justify-content:center;background:none;flex-direction:column;">
+                  <video id="waitAnimation" src="/static/levelminer/wait.webm" style="width:100%;height:100%;object-fit:contain;display:block;border-radius:18px;box-shadow:none;background:none;" autoplay loop muted playsinline></video>
+                  <video id="miningAnimation" src="/static/levelminer/level1.webm" style="width:100%;height:100%;object-fit:contain;display:none;border-radius:18px;box-shadow:0 2px 16px #0006;" autoplay loop muted playsinline></video>
+                  <div id="idleMessage" style="display:block;margin-top:12px;font-family:'Press Start 2P','VT323',monospace;font-size:0.72em;color:#7fd7ff;text-align:center;letter-spacing:0.03em;">Ваш сервер готовый, можете начать майнинг</div>
+                </div>
+                <div id="miningTerminal" style="display:none;width:260px;max-width:90vw;margin:10px auto 0 auto;background:linear-gradient(135deg,#2a2a2a 60%,#3a3a3a 100%);border-radius:13px;padding:14px 12px 12px 12px;font-family:'Press Start 2P','VT323',monospace;font-size:0.75em;color:#cccccc;box-shadow:0 2px 16px #666666,0 0 12px #66666644;min-height:54px;line-height:1.5;overflow:hidden;height:62px;border:2px solid #666666;letter-spacing:0.04em;text-shadow:0 0 6px #cccccc,0 0 2px #cccccc;transition:box-shadow 0.2s;"></div>
+                <div class="balance-rank" id="balanceRank" style="display:none;"></div>
+            </div>
+            <button class="mining-btn-modern mining-btn-fixed" onclick="startMining()">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" style="margin-right:10px;"><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="#ffd700" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="5" stroke="#7fd7ff" stroke-width="2"/></svg>
+                Майнинг
+            </button>
+        </div>
+        <div class="page" id="page-friends" style="display:none;">
+            <div class="friends-content">
+                <div class="friends-emoji">👥</div>
+                <h2 class="friends-title">Друзья</h2>
+                <p class="friends-desc" style="text-align:center;margin-bottom:10px;">
+                  Пригласи друзей и получи бонус в размере<br>
+                  <span style="display:inline-block;font-weight:700;color:#ffd700;font-size:1.15em;margin-top:2px;">25 SAB</span>
+                </p>
+                <div class="referral-block">
+                    <div class="referral-link-row">
+                        <input type="text" class="referral-link" id="referralLink" value="https://t.me/your_bot?start=ref123" readonly />
+                        <button class="copy-btn" onclick="copyReferralLink()" aria-label="Скопировать ссылку">
+                          <svg width="22" height="22" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:auto;">
+                            <rect x="6" y="4" width="9" height="12" rx="2" fill="currentColor" fill-opacity="0.18" stroke="currentColor" stroke-width="1.2"/>
+                            <rect x="3" y="7" width="9" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.2"/>
+                          </svg>
+                        </button>
+                    </div>
+                    <button class="share-btn" onclick="shareReferralLink()">Поделиться</button>
+                </div>
+                <div class="friends-divider"></div>
+                <div class="referrals-list">
+                    <h3 class="referrals-title">Ваши рефералы</h3>
+                    <div class="referrals-empty">Пока нет рефералов.</div>
+                </div>
+            </div>
+        </div>
+        <div class="page" id="page-leaderboard" style="display:none;">
+            <div class="leaderboard-content">
+                <div class="leaderboard-header">
+                  <div class="trophy-emoji" aria-label="Трофей">🏆</div>
+                  <h2 class="leaderboard-title">Таблица лидеров</h2>
+                </div>
+                <div class="leaderboard-profile-card" id="leaderboardProfileCard">
+                    <div class="profile-row">
+                        <div class="avatar" id="leaderboardAvatar"></div>
+                        <div class="profile-info">
+                            <div class="profile-name" id="leaderboardName"></div>
+                            <div class="profile-id" id="leaderboardId"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="leaderboard-divider"></div>
+            </div>
+        </div>
+        <div class="page" id="page-tasks" style="display:none;">
+            <div class="tasks-content">
+                <div class="tasks-emoji">📝</div>
+                <h2 class="tasks-title">Задания</h2>
+                <p class="tasks-empty">Пока здесь нет заданий.</p>
+            </div>
+        </div>
+        <div class="page" id="page-shop" style="display:none;">
+            <div class="shop-content">
+                <div class="shop-title">Магазин 🛒</div>
+                <div class="shop-tabs">
+                    <button class="shop-tab active" onclick="switchShopTab('cards')">Карточки профиля</button>
+                    <button class="shop-tab" onclick="switchShopTab('upgrades')">Апгрейды майнера</button>
+                </div>
+                <div id="shopCardsSection" class="shop-section">
+                    <div class="shop-cards-grid" id="shopCardsGrid"></div>
+                    <div id="shopError" style="color:#e07a3f;text-align:center;margin-top:10px;display:none;"></div>
+                </div>
+                <div id="shopUpgradesSection" class="shop-section" style="display:none;">
+                    <div class="upgrades-grid" id="upgradesGrid"></div>
+                    <div id="upgradesError" style="color:#e07a3f;text-align:center;margin-top:10px;display:none;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="page" id="page-game" style="display:none;">
+            <div class="game-content">
+                <div class="game-header">
+                    <div class="game-emoji">🎮</div>
+                    <h2 class="game-title">Игры</h2>
+                    <p class="game-subtitle">Здесь скоро появятся новые игры!</p>
+                </div>
+            </div>
+        </div>
+        <div class="page" id="page-profile" style="display:none;">
+          <div class="profile-wallet-container">
+            <!-- Карточка профиля полностью удалена по просьбе пользователя -->
+            <div class="profile-action-row">
+              <button class="profile-action-btn" onclick="openReceiveModal()" aria-label="Получить">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" fill="black"/><path d="M12 8v8M8 12l4 4 4-4"/></svg>
+              </button>
+              <button class="profile-action-btn" onclick="openSendModal()" aria-label="Отправить">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" fill="black"/><path d="M12 16V8M8 12l4-4 4 4"/></svg>
+              </button>
+              <button class="profile-action-btn" onclick="openHistoryModal()" aria-label="История">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" fill="black"/><path d="M12 6v6l4 2"/></svg>
+              </button>
+              <button class="profile-action-btn" onclick="openSettingsModal()" aria-label="Настройки">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" fill="black"/><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 8 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 8a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 8 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09c0 .66.39 1.26 1 1.51a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 8c.66 0 1.26.39 1.51 1H21a2 2 0 1 1 0 4h-.09c-.66 0-1.26.39-1.51 1z"/></svg>
+              </button>
+            </div>
+            <div class="profile-coin-shelf">
+              <div class="coin-icon-wrap">
+                <img src="/static/profile_backgrounds/ton.png" alt="SAB" class="coin-icon">
+              </div>
+              <div class="coin-name">SAB</div>
+              <div class="coin-balance" id="profileWalletBalanceShelf">0 SAB</div>
+            </div>
+          </div>
+        </div>
+        <!-- Получить -->
+        <div class="modal" id="receiveModal" style="display:none;">
+          <div class="modal-content">
+            <span class="close" onclick="closeReceiveModal()">&times;</span>
+            <div class="modal-title">Получить</div>
+            <div class="receive-id-row">
+              <span class="receive-id" id="receiveUserId">ID: 123456789</span>
+              <button class="copy-btn" id="copyIdBtn" onclick="copyReceiveId()">
+                <svg viewBox="0 0 20 20" fill="none"><rect x="4" y="4" width="12" height="12" rx="3" stroke="white" stroke-width="2"/><path d="M8 2h6a2 2 0 0 1 2 2v6" stroke="white" stroke-width="2"/></svg>
+                <span>Скопировать</span>
+              </button>
+            </div>
+            <div class="receive-qr" id="receiveQr"></div>
+            <div class="receive-tip">Покажите этот QR-код отправителю или скопируйте свой ID</div>
+          </div>
+        </div>
+        <!-- Отправить -->
+        <div class="modal" id="sendModal" style="display:none;">
+          <div class="modal-content">
+            <span class="close" onclick="closeSendModal()">&times;</span>
+            <div class="modal-title">Отправить</div>
+            <form class="send-form" onsubmit="event.preventDefault(); sendTransaction();">
+              <input type="text" id="sendToId" class="send-input" placeholder="ID получателя" autocomplete="off">
+              <input type="number" id="sendAmount" class="send-input" placeholder="Сумма" min="0.0001" step="0.0001" autocomplete="off">
+              <button type="submit" class="send-btn" id="sendBtn">Отправить</button>
+            </form>
+            <div class="send-warning">Внимание! Переводите только на свой страх и риск. Проверьте ID получателя!</div>
+          </div>
+        </div>
+        <!-- История -->
+        <div class="modal" id="historyModal" style="display:none;">
+          <div class="modal-content">
+            <span class="close" onclick="closeHistoryModal()">&times;</span>
+            <div class="modal-title">История транзакций</div>
+            <div class="history-list" id="historyList"></div>
+            <div class="history-pagination">
+              <button onclick="prevHistoryPage()">←</button>
+              <span id="historyPageInfo">1 / 1</span>
+              <button onclick="nextHistoryPage()">→</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="nav-bar-modern">
+        <button class="nav-btn-modern" id="navMain" aria-label="Главная" onclick="switchPage('home')">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M3 12L12 3l9 9" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 21V15h6v6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="nav-btn-modern" id="navFriends" aria-label="Друзья" onclick="switchPage('friends')">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="7" r="4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="nav-btn-modern" id="navTasks" aria-label="Задания" onclick="switchPage('tasks')">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="18" rx="4" stroke="white" stroke-width="2"/><path d="M8 10h8M8 14h4" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+        <button class="nav-btn-modern" id="navLeaderboard" aria-label="Лидерборд" onclick="switchPage('leaderboard')">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M17 17V7a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v10" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="2" y="17" width="20" height="5" rx="2" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 12l2 2 4-4" stroke="gold" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="nav-btn-modern" id="navProfile" aria-label="Профиль" onclick="switchPage('profile')">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="white" stroke-width="2"/><path d="M4 20v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2" stroke="white" stroke-width="2"/></svg>
+        </button>
+        <button class="nav-btn-modern" id="navShop" aria-label="Магазин" onclick="switchPage('shop')">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M6 6h15l-1.5 9h-13z" stroke="white" stroke-width="2"/><circle cx="9" cy="21" r="1" stroke="white" stroke-width="2"/><circle cx="18" cy="21" r="1" stroke="white" stroke-width="2"/></svg>
+        </button>
+        <button class="nav-btn-modern" id="navGame" aria-label="Игра" onclick="switchPage('game')">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="settings-modal" id="settingsModal">
+        <div class="settings-content">
+            <button class="settings-close-btn" onclick="closeSettings()">✕</button>
+            <h3>Выберите фон карточки</h3>
+            <div class="bg-list" id="bgList"></div>
+        </div>
+    </div>
+    <div class="user-stats-modal" id="userStatsModal">
+        <div class="user-stats-content">
+            <div class="user-stats-header">
+                <div class="user-stats-avatar" id="statsAvatar"></div>
+                <div class="user-stats-info">
+                    <h3 id="statsName" style="margin:0;color:#fff;font-size:1.2em;"></h3>
+                    <p id="statsId" style="margin:4px 0 0 0;color:#7fd7ff;font-size:0.9em;"></p>
+                </div>
+                <button class="close-btn" onclick="closeUserStats()">✕</button>
+            </div>
+            <div class="user-stats-body">
+                <div class="stat-item">
+                    <div class="stat-icon">📅</div>
+                    <div class="stat-info">
+                        <div class="stat-label">Дней в игре</div>
+                        <div class="stat-value" id="statsDays">-</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-info">
+                        <div class="stat-label">Рефералов</div>
+                        <div class="stat-value" id="statsReferrals">-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <audio id="bgMusic" src="/static/sound/music.mp3" autoplay loop preload="auto" style="display:none"></audio>
+    <script>
+    // --- Глобальные переменные ---
+    let userProfile = null;
+    let miningTimer = null;
+    let miningSecondsLeft = 0;
+    let myRefCode = '';
+    let myTelegramId = '';
+    let miningLocked = false;
+    let selectedProfileBgUrl = '';
+    let cardPage = 0;
+    const CARDS_PER_PAGE = 4;
+    let ownedCards = [];
+
+    function getTelegramId() {
+        // 1. Из URL
+        let id = getParam('user_id');
+        if (id) return id;
+        // 2. Из загруженного профиля
+        if (userProfile && userProfile.telegram_id) return userProfile.telegram_id;
+        // 3. Из глобальной переменной (если уже был установлен)
+        if (myTelegramId) return myTelegramId;
+        // 4. Не найден — показать ошибку
+        alert('Ошибка: не удалось определить Telegram ID пользователя!');
+        return '';
+    }
+
+    // --- Вспомогательные функции ---
+    function getParam(name) {
+        const url = new URL(window.location.href);
+        return url.searchParams.get(name) || '';
+    }
+    function formatTime(sec) {
+        const h = Math.floor(sec / 3600);
+        const m = Math.floor((sec % 3600) / 60);
+        const s = sec % 60;
+        return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+    }
+
+    // --- Регистрация пользователя и загрузка профиля ---
+    async function registerAndLoadProfile() {
+        const firstName = getParam('first_name');
+        const lastName = getParam('last_name');
+        const telegramId = getTelegramId();
+        const photoUrl = getParam('photo_url');
+        const refCode = getParam('start');
+        myTelegramId = telegramId;
+        // Регистрация
+        const regResp = await fetch('/api/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                telegram_id: telegramId,
+                first_name: firstName,
+                last_name: lastName,
+                photo_url: photoUrl,
+                ref_code: refCode
+            })
+        });
+        const regData = await regResp.json();
+        myRefCode = regData.ref_code;
+        // Получаем профиль
+        await loadProfile();
+        await loadMiningStatus();
+        await loadReferrals();
+        await loadLeaderboard();
+    }
+
+    async function loadProfile() {
+        const resp = await fetch(`/api/profile?telegram_id=${getTelegramId()}`);
+        const data = await resp.json();
+        if (!data.ok) return;
+        // Заполняем профиль
+        document.getElementById('profileName').textContent = (data.first_name + ' ' + data.last_name).trim();
+        document.getElementById('profileId').textContent = 'ID: ' + getTelegramId();
+        // Аватар
+        if (data.photo_url) {
+            document.getElementById('avatar').innerHTML = `<img src="https://api.telegram.org/file/bot{{ bot_token }}/${data.photo_url}" style="width:100%;height:100%;border-radius:12px;">`;
+        } else {
+            let initials = (data.first_name[0] || '') + (data.last_name[0] || '');
+            document.getElementById('avatar').textContent = initials.toUpperCase() || '👤';
+        }
+        // Баланс
+        document.querySelector('.balance-amount').textContent = Math.floor(data.balance);
+        // Реферальная ссылка
+        document.getElementById('referralLink').value = `https://t.me/your_bot?start=${myRefCode}`;
+        // Удалён блок profileBgPreview, чтобы не было ошибки!
+        // ... остальной код ...
+    }
+
+    // --- Майнинг ---
+    function showMiningAnimation(show) {
+        const miningVideo = document.getElementById('miningAnimation');
+        const waitVideo = document.getElementById('waitAnimation');
+        const idleMsg = document.getElementById('idleMessage');
+        if (show) {
+            miningVideo.style.display = 'block';
+            miningVideo.currentTime = 0;
+            miningVideo.play();
+            waitVideo.style.display = 'none';
+            waitVideo.pause();
+            idleMsg.style.display = 'none';
+            startMiningTerminal();
+        } else {
+            miningVideo.pause();
+            miningVideo.style.display = 'none';
+            waitVideo.style.display = 'block';
+            waitVideo.currentTime = 0;
+            waitVideo.play();
+            idleMsg.style.display = 'block';
+            stopMiningTerminal();
+        }
+    }
+
+    async function startMining() {
+        if (miningLocked) return;
+        miningLocked = true;
+        document.querySelector('.mining-btn-modern').disabled = true;
+        document.querySelector('.mining-btn-modern').classList.add('active');
+        const resp = await fetch('/api/mine', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ telegram_id: getTelegramId() })
+        });
+        const data = await resp.json();
+        if (data.ok) {
+            await loadMiningStatus();
+            await loadProfile();
+        } else {
+            alert(data.error || 'Ошибка майнинга');
+        }
+        showMiningAnimation(true);
+    }
+    async function loadMiningStatus() {
+        const resp = await fetch(`/api/mining_status?telegram_id=${getTelegramId()}`);
+        const data = await resp.json();
+        miningLocked = data.locked;
+        miningSecondsLeft = data.seconds_left;
+        window.pendingClaim = data.pending_claim || 0;
+        updateMiningButton();
+        if (miningLocked) {
+            startMiningTimer();
+        } else {
+            stopMiningTimer();
+        }
+        document.querySelector('.balance-amount').textContent = Math.floor(data.balance);
+        if (data.locked) {
+            showMiningAnimation(true);
+        } else {
+            showMiningAnimation(false);
+        }
+    }
+    function updateMiningButton() {
+        const btn = document.querySelector('.mining-btn-modern');
+        if (window.pendingClaim && window.pendingClaim > 0) {
+            btn.disabled = false;
+            btn.classList.add('active');
+            btn.textContent = `Claim (+${window.pendingClaim} SAB)`;
+            btn.onclick = claimReward;
+        } else if (miningLocked) {
+            btn.disabled = true;
+            btn.classList.add('active');
+            btn.textContent = 'Майнинг (' + formatTime(miningSecondsLeft) + ')';
+            btn.onclick = null;
+        } else {
+            btn.disabled = false;
+            btn.classList.remove('active');
+            btn.innerHTML = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" style="margin-right:10px;"><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="#ffd700" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="5" stroke="#7fd7ff" stroke-width="2"/></svg>Майнинг';
+            btn.onclick = startMining;
+        }
+    }
+    async function claimReward() {
+        const btn = document.querySelector('.mining-btn-modern');
+        btn.disabled = true;
+        btn.textContent = 'Зачисление...';
+        const resp = await fetch('/api/claim', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ telegram_id: getTelegramId() })
+        });
+        const data = await resp.json();
+        if (data.ok) {
+            window.pendingClaim = 0;
+            await loadProfile();
+            await loadMiningStatus();
+        } else {
+            alert(data.error || 'Ошибка claim');
+            await loadMiningStatus();
+        }
+    }
+    function startMiningTimer() {
+        if (miningTimer) clearInterval(miningTimer);
+        miningTimer = setInterval(() => {
+            if (miningSecondsLeft > 0) {
+                miningSecondsLeft--;
+                updateMiningButton();
+            } else {
+                stopMiningTimer();
+                loadMiningStatus();
+                loadProfile();
+            }
+        }, 1000);
+    }
+    function stopMiningTimer() {
+        if (miningTimer) clearInterval(miningTimer);
+        miningTimer = null;
+        updateMiningButton();
+        showMiningAnimation(false);
+    }
+
+    // --- Рефералы ---
+    async function loadReferrals() {
+        const resp = await fetch(`/api/referrals?telegram_id=${getTelegramId()}`);
+        const data = await resp.json();
+        const list = document.querySelector('.referrals-list');
+        if (!data.ok || !data.referrals.length) {
+            list.innerHTML = '<h3 class="referrals-title">Ваши рефералы</h3><div class="referrals-empty">Пока нет рефералов.</div>';
+            return;
+        }
+        let html = '<h3 class="referrals-title">Ваши рефералы</h3>';
+        html += '<div class="referrals-list">';
+        for (const ref of data.referrals) {
+            const cardBg = ref.card_bg ? `background:url('${ref.card_bg}') center/cover no-repeat;` : '';
+            html += `<div class="referral-item" onclick="showUserStats('${ref.telegram_id}', '${ref.first_name}', '${ref.last_name}', '${ref.photo_url || ''}')" style="display:flex;align-items:center;margin-bottom:12px;${cardBg}border-radius:14px;padding:8px 14px;box-shadow:0 2px 8px #0002;cursor:pointer;transition:transform 0.2s;">
+                <div class="avatar" style="width:38px;height:38px;margin-right:10px;">
+                    ${ref.photo_url ? `<img src="https://api.telegram.org/file/bot{{ bot_token }}/${ref.photo_url}" style="width:100%;height:100%;border-radius:10px;">` : (ref.first_name[0]||'')+(ref.last_name[0]||'')}
+                </div>
+                <div style="flex:1;">
+                    <div style="font-weight:600;font-size:1.05em;">${ref.first_name} ${ref.last_name}</div>
+                    <div style="color:#7a8599;font-size:0.98em;">ID: ${ref.telegram_id}</div>
+                </div>
+            </div>`;
+        }
+        html += '</div>';
+        list.innerHTML = html;
+    }
+
+    // --- Лидерборд ---
+    async function loadLeaderboard() {
+        const resp = await fetch('/api/leaderboard');
+        const data = await resp.json();
+        const content = document.querySelector('.leaderboard-content');
+        if (!data.ok || !data.leaderboard.length) {
+            content.innerHTML = '<div style="color:#7a8599;text-align:center;">Нет данных для лидерборда.</div>';
+            return;
+        }
+        let html = '<div class="leaderboard-header"><div class="trophy-emoji" aria-label="Трофей">🏆</div><h2 class="leaderboard-title">Таблица лидеров</h2></div>';
+        html += '<div class="leaderboard-list">';
+        for (let i = 0; i < data.leaderboard.length; i++) {
+            const user = data.leaderboard[i];
+            const cardBg = user.card_bg ? `background:url('${user.card_bg}') center/cover no-repeat;` : '';
+            let placeClass = '';
+            if (i === 0) placeClass = 'gold';
+            else if (i === 1) placeClass = 'silver';
+            else if (i === 2) placeClass = 'bronze';
+            html += `<div class="leaderboard-profile-card ${placeClass}" onclick="showUserStats('${user.telegram_id}', '${user.first_name}', '${user.last_name}', '${user.photo_url || ''}')" style="display:flex;align-items:center;margin-bottom:12px;${cardBg}cursor:pointer;transition:transform 0.2s;">
+                <div class="avatar" style="width:48px;height:48px;margin-right:16px;">
+                    ${user.photo_url ? `<img src="https://api.telegram.org/file/bot{{ bot_token }}/${user.photo_url}" style="width:100%;height:100%;border-radius:12px;">` : (user.first_name[0]||'')+(user.last_name[0]||'')}
+                </div>
+                <div style="flex:1;">
+                    <div class="profile-name" style="font-size:1.15em;font-weight:700;color:#fff;margin-bottom:2px;">${user.first_name} ${user.last_name}</div>
+                    <div class="profile-id" style="color:#7fd7ff;font-size:0.98em;">ID: ${user.telegram_id}</div>
+                </div>
+                <div style="font-size:1.2em;font-weight:700;margin-left:12px;">${user.trophy}</div>
+                <div style="font-size:1.1em;color:#ffd700;margin-left:12px;min-width:60px;text-align:right;">${user.balance} SAB</div>
+            </div>`;
+        }
+        html += '</div>';
+        content.innerHTML = html;
+    }
+
+    function formatShortNumber(num) {
+        if (num >= 1000000) return (num/1000000).toFixed(num%1000000===0?0:1) + 'м';
+        if (num >= 10000) return (num/1000).toFixed(num%1000===0?0:1) + 'к';
+        if (num >= 1000) return (num/1000).toFixed(num%1000===0?0:1) + 'к';
+        return num.toString();
+    }
+
+    // --- Инициализация ---
+    window.addEventListener('DOMContentLoaded', async function() {
+        document.getElementById('preloader').style.display = 'flex';
+        try {
+            await registerAndLoadProfile();
+        } catch (e) {
+            alert('Ошибка загрузки: ' + e);
+        }
+        document.getElementById('preloader').style.display = 'none';
+        switchPage('home');
+    });
+
+    // --- Настройки ---
+    function openSettings() {
+        document.getElementById('settingsModal').style.display = 'flex';
+        loadOwnedBackgrounds();
+    }
+    function closeSettings() {
+        document.getElementById('settingsModal').style.display = 'none';
+    }
+    // Загружаем только купленные карточки
+    async function loadOwnedBackgrounds() {
+        cardPage = 0;
+        const bgList = document.getElementById('bgList');
+        bgList.innerHTML = '<div style="color:#7a8599;text-align:center;padding:20px;">Загрузка...</div>';
+        try {
+            const resp = await fetch(`/api/my_cards?telegram_id=${getTelegramId()}`);
+            const data = await resp.json();
+            bgList.innerHTML = '';
+            if (data.ok && data.cards.length > 0) {
+                ownedCards = data.cards;
+                renderCardPage();
+            } else {
+                bgList.innerHTML = '<div style="color:#7a8599;text-align:center;padding:20px;">У вас нет купленных карточек. Купите их в магазине!</div>';
+            }
+        } catch (e) {
+            bgList.innerHTML = '<div style="color:#e07a3f;text-align:center;padding:20px;">Ошибка загрузки карточек</div>';
+        }
+    }
+
+    function renderCardPage() {
+        const bgList = document.getElementById('bgList');
+        bgList.innerHTML = '';
+        const start = cardPage * CARDS_PER_PAGE;
+        const end = start + CARDS_PER_PAGE;
+        const pageCards = ownedCards.slice(start, end);
+
+        // Сетка 2x2
+        const grid = document.createElement('div');
+        grid.style.display = 'grid';
+        grid.style.gridTemplateColumns = '1fr 1fr';
+        grid.style.gridGap = '14px';
+        grid.style.justifyItems = 'center';
+        grid.style.marginBottom = '10px';
+
+        pageCards.forEach(card => {
+            const img = document.createElement('img');
+            img.src = card.image_url;
+            img.className = 'bg-thumb';
+            img.style.width = '90px';
+            img.style.height = '60px';
+            img.onclick = () => setProfileBg(img.src);
+            if (selectedProfileBgUrl && card.image_url === selectedProfileBgUrl) {
+                img.classList.add('selected');
+            }
+            grid.appendChild(img);
+        });
+        bgList.appendChild(grid);
+
+        // Пагинация
+        if (ownedCards.length > CARDS_PER_PAGE) {
+            const nav = document.createElement('div');
+            nav.style.textAlign = 'center';
+            nav.style.marginTop = '10px';
+
+            const prev = document.createElement('button');
+            prev.textContent = '←';
+            prev.disabled = cardPage === 0;
+            prev.onclick = () => { cardPage--; renderCardPage(); };
+            prev.style.margin = '0 8px';
+            prev.style.fontSize = '1.2em';
+            prev.style.padding = '2px 10px';
+            prev.style.borderRadius = '8px';
+            prev.style.border = 'none';
+            prev.style.background = '#23272f';
+            prev.style.color = '#7fd7ff';
+            prev.style.cursor = 'pointer';
+            prev.style.opacity = prev.disabled ? '0.5' : '1';
+
+            const next = document.createElement('button');
+            next.textContent = '→';
+            next.disabled = (cardPage + 1) * CARDS_PER_PAGE >= ownedCards.length;
+            next.onclick = () => { cardPage++; renderCardPage(); };
+            next.style.margin = '0 8px';
+            next.style.fontSize = '1.2em';
+            next.style.padding = '2px 10px';
+            next.style.borderRadius = '8px';
+            next.style.border = 'none';
+            next.style.background = '#23272f';
+            next.style.color = '#7fd7ff';
+            next.style.cursor = 'pointer';
+            next.style.opacity = next.disabled ? '0.5' : '1';
+
+            const pageInfo = document.createElement('span');
+            pageInfo.textContent = `  ${cardPage + 1} / ${Math.ceil(ownedCards.length / CARDS_PER_PAGE)}  `;
+            pageInfo.style.color = '#7fd7ff';
+            pageInfo.style.fontSize = '1em';
+
+            nav.appendChild(prev);
+            nav.appendChild(pageInfo);
+            nav.appendChild(next);
+
+            bgList.appendChild(nav);
+        }
+    }
+
+    // Выбор и сохранение фона
+    function setProfileBg(url) {
+        document.querySelector('.header').style.background = `url('${url}') center/cover no-repeat`;
+        document.querySelectorAll('.bg-thumb').forEach(el => el.classList.remove('selected'));
+        const selectedImg = Array.from(document.querySelectorAll('.bg-thumb')).find(el => el.src === url);
+        if (selectedImg) selectedImg.classList.add('selected');
+        selectedProfileBgUrl = url;
+        fetch('/api/set_card_bg', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ telegram_id: getTelegramId(), card_bg: url })
+        });
+    }
+
+    // После покупки карточки — обновить настройки, если открыты
+    async function buyCard(cardId, btn) {
+        btn.disabled = true;
+        btn.textContent = 'Покупка...';
+        const resp = await fetch('/api/buy_card', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ telegram_id: getTelegramId(), card_id: cardId })
+        });
+        const data = await resp.json();
+        if (data.ok) {
+            btn.classList.add('owned');
+            btn.textContent = 'Куплено';
+            btn.disabled = true;
+            await loadProfile();
+            if (document.getElementById('settingsModal').style.display === 'flex') {
+                await loadOwnedBackgrounds();
+            }
+        } else {
+            btn.textContent = 'Купить';
+            btn.disabled = false;
+            document.getElementById('shopError').textContent = data.error || 'Ошибка покупки';
+            document.getElementById('shopError').style.display = 'block';
+        }
+    }
+
+    // --- SPA Navigation ---
+    function switchPage(page) {
+        // Закрыть все модальные окна профиля
+        document.getElementById('receiveModal').style.display = 'none';
+        document.getElementById('sendModal').style.display = 'none';
+        document.getElementById('historyModal').style.display = 'none';
+        // Скрыть все страницы
+        document.getElementById('page-home').style.display = 'none';
+        document.getElementById('page-friends').style.display = 'none';
+        document.getElementById('page-tasks').style.display = 'none';
+        document.getElementById('page-leaderboard').style.display = 'none';
+        document.getElementById('page-shop').style.display = 'none';
+        document.getElementById('page-game').style.display = 'none';
+        document.getElementById('page-profile').style.display = 'none';
+        // Показать выбранную
+        if (page === 'home') {
+            document.getElementById('page-home').style.display = '';
+        } else if (page === 'friends') {
+            document.getElementById('page-friends').style.display = '';
+        } else if (page === 'tasks') {
+            document.getElementById('page-tasks').style.display = '';
+        } else if (page === 'leaderboard') {
+            document.getElementById('page-leaderboard').style.display = '';
+        } else if (page === 'shop') {
+            document.getElementById('page-shop').style.display = '';
+        } else if (page === 'game') {
+            document.getElementById('page-game').style.display = '';
+        } else if (page === 'profile') {
+            document.getElementById('page-profile').style.display = '';
+        } else {
+            // fallback: показываем главную
+            document.getElementById('page-home').style.display = '';
+        }
+        document.getElementById('navMain').classList.toggle('active', page === 'home');
+        document.getElementById('navFriends').classList.toggle('active', page === 'friends');
+        document.getElementById('navTasks').classList.toggle('active', page === 'tasks');
+        document.getElementById('navLeaderboard').classList.toggle('active', page === 'leaderboard');
+        document.getElementById('navShop').classList.toggle('active', page === 'shop');
+        document.getElementById('navGame').classList.toggle('active', page === 'game');
+        document.getElementById('navProfile').classList.toggle('active', page === 'profile');
+        document.querySelector('.header').style.display = (page === 'home') ? '' : 'none';
+        // Применяем фон профиля к карточке на лидерборде
+        const leaderboardCard = document.getElementById('leaderboardProfileCard');
+        if (leaderboardCard) {
+            const profileCard = document.getElementById('profileCard');
+            if (profileCard) {
+                leaderboardCard.style.background = window.getComputedStyle(profileCard).background;
+            }
+        }
+        if (page === 'shop') {
+            switchShopTab('cards'); // По умолчанию показываем карточки
+        }
+        if (page !== 'shop') {
+            window._shopCardsLoaded = false;
+        }
+    }
+    function copyReferralLink() {
+        const input = document.getElementById('referralLink');
+        input.select();
+        input.setSelectionRange(0, 99999);
+        document.execCommand('copy');
+    }
+    function shareReferralLink() {
+        const input = document.getElementById('referralLink');
+        if (navigator.share) {
+            navigator.share({
+                title: 'Моя реферальная ссылка',
+                text: 'Присоединяйся и получи бонус!',
+                url: input.value
+            });
+        } else {
+            copyReferralLink();
+            alert('Ссылка скопирована!');
+        }
+    }
+
+    // --- User Stats Modal ---
+    async function showUserStats(telegramId, firstName, lastName, photoUrl) {
+        // Show modal immediately with basic info
+        document.getElementById('statsName').textContent = `${firstName} ${lastName}`;
+        document.getElementById('statsId').textContent = `ID: ${telegramId}`;
+        
+        // Set avatar
+        const avatarEl = document.getElementById('statsAvatar');
+        if (photoUrl) {
+            avatarEl.innerHTML = `<img src="https://api.telegram.org/file/bot{{ bot_token }}/${photoUrl}" style="width:100%;height:100%;border-radius:12px;object-fit:cover;">`;
+        } else {
+            const initials = (firstName[0] || '') + (lastName[0] || '');
+            avatarEl.textContent = initials.toUpperCase() || '👤';
+        }
+        
+        // Show loading state
+        document.getElementById('statsDays').textContent = 'Загрузка...';
+        document.getElementById('statsReferrals').textContent = 'Загрузка...';
+        
+        // Show modal
+        document.getElementById('userStatsModal').style.display = 'flex';
+        
+        // Fetch user stats
+        try {
+            const resp = await fetch(`/api/user_stats?telegram_id=${telegramId}`);
+            const data = await resp.json();
+            if (data.ok) {
+                document.getElementById('statsDays').textContent = data.days_played;
+                document.getElementById('statsReferrals').textContent = data.num_referrals;
+            } else {
+                document.getElementById('statsDays').textContent = 'Ошибка';
+                document.getElementById('statsReferrals').textContent = 'Ошибка';
+            }
+        } catch (error) {
+            document.getElementById('statsDays').textContent = 'Ошибка';
+            document.getElementById('statsReferrals').textContent = 'Ошибка';
+        }
+    }
+    
+    function closeUserStats() {
+        document.getElementById('userStatsModal').style.display = 'none';
+    }
+
+    // --- Майнинг терминал-симуляция ---
+    let miningTerminalTimer = null;
+    function randomHash() {
+        const chars = 'abcdef0123456789';
+        let out = '';
+        for (let i = 0; i < 32; i++) out += chars[Math.floor(Math.random()*chars.length)];
+        return out;
+    }
+    function randomNonce() {
+        return Math.floor(Math.random()*100000000);
+    }
+    function randomDiff() {
+        return (Math.random()*10000).toFixed(2);
+    }
+    function randomMsg() {
+        const msgs = [
+            () => `Nonce: ${randomNonce()}  Hash: ${randomHash()}`,
+            () => `Hash: ${randomHash()}  Accepted`,
+            () => `Block found! Hash: ${randomHash()}`,
+            () => `Diff: ${randomDiff()}  Hash: ${randomHash()}`,
+            () => `Nonce: ${randomNonce()}  Rejected`,
+            () => `Hash: ${randomHash()}  ...`,
+        ];
+        return msgs[Math.floor(Math.random()*msgs.length)]();
+    }
+    function startMiningTerminal() {
+        const term = document.getElementById('miningTerminal');
+        term.style.display = 'block';
+        term.textContent = '';
+        if (miningTerminalTimer) clearInterval(miningTerminalTimer);
+        miningTerminalTimer = setInterval(() => {
+            let lines = term.textContent.split('\n');
+            if (lines.length > 3) lines = lines.slice(lines.length-3);
+            lines.push(randomMsg());
+            term.textContent = lines.join('\n');
+            term.scrollTop = term.scrollHeight;
+        }, 500);
+    }
+    function stopMiningTerminal() {
+        const term = document.getElementById('miningTerminal');
+        term.style.display = 'none';
+        term.textContent = '';
+        if (miningTerminalTimer) clearInterval(miningTerminalTimer);
+        miningTerminalTimer = null;
+    }
+
+    function showMiningAnimation(show) {
+        const miningVideo = document.getElementById('miningAnimation');
+        const waitVideo = document.getElementById('waitAnimation');
+        const idleMsg = document.getElementById('idleMessage');
+        if (show) {
+            miningVideo.style.display = 'block';
+            miningVideo.currentTime = 0;
+            miningVideo.play();
+            waitVideo.style.display = 'none';
+            waitVideo.pause();
+            idleMsg.style.display = 'none';
+            startMiningTerminal();
+        } else {
+            miningVideo.pause();
+            miningVideo.style.display = 'none';
+            waitVideo.style.display = 'block';
+            waitVideo.currentTime = 0;
+            waitVideo.play();
+            idleMsg.style.display = 'block';
+            stopMiningTerminal();
+        }
+    }
+
+    async function loadShopCards() {
+        const grid = document.getElementById('shopCardsGrid');
+        const errorDiv = document.getElementById('shopError');
+        grid.innerHTML = '';
+        errorDiv.style.display = 'none';
+        try {
+            const [shopResp, myResp] = await Promise.all([
+                fetch('/api/shop_cards'),
+                fetch(`/api/my_cards?telegram_id=${getTelegramId()}`)
+            ]);
+            const shopData = await shopResp.json();
+            const myData = await myResp.json();
+            const ownedIds = myData.ok ? new Set(myData.cards.map(c => c.id)) : new Set();
+            if (!shopData.ok || !shopData.cards.length) {
+                grid.innerHTML = '<div style="color:#7a8599;text-align:center;">Нет карточек в магазине.</div>';
+                return;
+            }
+            for (const card of shopData.cards) {
+                const owned = ownedIds.has(card.id);
+                grid.innerHTML += `
+                    <div class="shop-card${owned ? ' owned' : ''}">
+                        <img class="shop-card-img" src="${card.image_url}" alt="${card.name}">
+                        <div class="shop-card-name">${card.name}</div>
+                        <div class="shop-card-price">${card.price.toLocaleString()} SAB</div>
+                        <button class="shop-card-btn${owned ? ' owned' : ''}" ${owned ? 'disabled' : ''} onclick="buyCard(${card.id}, this)">${owned ? 'Куплено' : 'Купить'}</button>
+                    </div>
+                `;
+            }
+        } catch (e) {
+            errorDiv.textContent = 'Ошибка загрузки магазина.';
+            errorDiv.style.display = 'block';
+        }
+    }
+
+    // --- Переключение вкладок магазина ---
+    function switchShopTab(tab) {
+        // Обновляем активную вкладку
+        document.querySelectorAll('.shop-tab').forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+        // Показываем/скрываем секции
+        if (tab === 'cards') {
+            document.getElementById('shopCardsSection').style.display = 'block';
+            document.getElementById('shopUpgradesSection').style.display = 'none';
+            if (!window._shopCardsLoaded) {
+                loadShopCards();
+                window._shopCardsLoaded = true;
+            }
+        } else if (tab === 'upgrades') {
+            document.getElementById('shopCardsSection').style.display = 'none';
+            document.getElementById('shopUpgradesSection').style.display = 'block';
+            loadUpgrades();
+        }
+    }
+
+    // --- Апгрейды майнера ---
+    async function loadUpgrades() {
+        const grid = document.getElementById('upgradesGrid');
+        const errorDiv = document.getElementById('upgradesError');
+        grid.innerHTML = '';
+        errorDiv.style.display = 'none';
+        try {
+            const resp = await fetch(`/api/upgrades?telegram_id=${getTelegramId()}`);
+            const data = await resp.json();
+            if (!data.ok || !data.upgrades.length) {
+                grid.innerHTML = '<div style="color:#7a8599;text-align:center;">Нет доступных апгрейдов.</div>';
+                return;
+            }
+            for (const upgrade of data.upgrades) {
+                grid.innerHTML += `
+                    <div class="upgrade-card">
+                        <div class="upgrade-header">
+                            <div class="upgrade-title">${upgrade.title}</div>
+                            <div class="upgrade-level">Ур. ${upgrade.level}</div>
+                        </div>
+                        <div class="upgrade-desc">${upgrade.desc}</div>
+                        <div class="upgrade-stats">
+                            <div class="upgrade-effect">
+                                <span>Эффект:</span>
+                                <span class="upgrade-effect-value">${upgrade.effect.toFixed(2)}${upgrade.unit}</span>
+                            </div>
+                            <div class="upgrade-price">${upgrade.next_price.toLocaleString()} SAB</div>
+                        </div>
+                        <button class="upgrade-btn" onclick="buyUpgrade('${upgrade.type}', this)">
+                            Купить апгрейд
+                        </button>
+                    </div>
+                `;
+            }
+        } catch (e) {
+            errorDiv.textContent = 'Ошибка загрузки апгрейдов.';
+            errorDiv.style.display = 'block';
+        }
+    }
+
+    async function buyUpgrade(type, btn) {
+        btn.disabled = true;
+        btn.textContent = 'Покупка...';
+        try {
+            const resp = await fetch('/api/buy_upgrade', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    telegram_id: getTelegramId(),
+                    type: type
+                })
+            });
+            const data = await resp.json();
+            if (data.ok) {
+                // Обновляем баланс в интерфейсе
+                document.querySelector('.balance-amount').textContent = Math.floor(data.new_balance);
+                // Перезагружаем апгрейды
+                await loadUpgrades();
+                // Показываем уведомление
+                alert(`Апгрейд куплен! Новый уровень: ${data.level}`);
+            } else {
+                alert(data.error || 'Ошибка покупки апгрейда');
+            }
+        } catch (e) {
+            alert('Ошибка сети');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Купить апгрейд';
+        }
+    }
+    
+
+
+
+    
+
+    
+
+    
+
+    
+
+    // Whack-A-Mole Game Logic
+    let whackGameRunning = false;
+    let whackScore = 0;
+    let whackTime = 30;
+    let whackAttempts = 0;
+    let whackBestScore = 0;
+    let hitsCount = 0;
+    let missesCount = 0;
+    let lastHole = null;
+    let gameTimer = null;
+    let moleTimer = null;
+    
+    function loadWhackGameStats() {
+        const attempts = localStorage.getItem('whackAttempts') || 0;
+        const bestScore = localStorage.getItem('whackBestScore') || 0;
+        const lastPlayDate = localStorage.getItem('whackLastPlayDate') || '';
+        
+        // Reset attempts if it's a new day
+        const today = new Date().toDateString();
+        if (lastPlayDate !== today) {
+            localStorage.setItem('whackAttempts', '0');
+            localStorage.setItem('whackLastPlayDate', today);
+            whackAttempts = 0;
+        } else {
+            whackAttempts = parseInt(attempts);
+        }
+        
+        whackBestScore = parseInt(bestScore);
+        
+        document.getElementById('gameAttempts').textContent = `${whackAttempts}/3`;
+        document.getElementById('gameBestScore').textContent = whackBestScore;
+    }
+    
+    function startWhackAMole() {
+        if (whackAttempts >= 3) {
+            alert('Достигнут лимит попыток на сегодня!');
+            return;
+        }
+        
+        whackAttempts++;
+        localStorage.setItem('whackAttempts', whackAttempts);
+        
+        whackGameRunning = true;
+        whackScore = 0;
+        whackTime = 30;
+        hitsCount = 0;
+        missesCount = 0;
+        
+        // Show game elements
+        document.getElementById('gameStartScreen').style.display = 'none';
+        document.getElementById('gameHud').style.display = 'block';
+        document.getElementById('whackGame').style.display = 'block';
+        document.getElementById('gameOverScreen').style.display = 'none';
+        
+        updateWhackHUD();
+        startMoleTimer();
+        startGameTimer();
+        
+        // Add click listeners
+        document.querySelectorAll('.mole').forEach(mole => {
+            mole.addEventListener('click', whackMole);
+        });
+    }
+    
+    function startGameTimer() {
+        gameTimer = setInterval(() => {
+            whackTime--;
+            updateWhackHUD();
+            
+            if (whackTime <= 0) {
+                endWhackGame();
+            }
+        }, 1000);
+    }
+    
+    function startMoleTimer() {
+        showRandomMole();
+    }
+    
+    function showRandomMole() {
+        if (!whackGameRunning) return;
+        const holes = document.querySelectorAll('.hole');
+        // Сначала убираем .up у всех лунок
+        holes.forEach(hole => hole.classList.remove('up', 'hit'));
+        // Выбираем одну случайную лунку
+        const randomHole = getRandomHole(holes);
+        const randomTime = Math.random() * 1000 + 500; // 500-1500ms
+        randomHole.classList.add('up');
+        setTimeout(() => {
+            if (whackGameRunning) {
+                randomHole.classList.remove('up');
+                // Count as miss if mole wasn't hit
+                if (!randomHole.classList.contains('hit')) {
+                    missesCount++;
+                }
+                randomHole.classList.remove('hit');
+                // Следующий крот
+                setTimeout(() => {
+                    if (whackGameRunning) {
+                        showRandomMole();
+                    }
+                }, Math.random() * 500 + 200);
+            }
+        }, randomTime);
+    }
+    
+    function getRandomHole(holes) {
+        const idx = Math.floor(Math.random() * holes.length);
+        const hole = holes[idx];
+        
+        if (hole === lastHole) {
+            return getRandomHole(holes);
+        }
+        
+        lastHole = hole;
+        return hole;
+    }
+    
+    function whackMole(e) {
+        if (!whackGameRunning) return;
+        
+        const mole = e.target;
+        const hole = mole.parentElement;
+        
+        if (hole.classList.contains('up') && !hole.classList.contains('hit')) {
+            // Hit!
+            hole.classList.add('hit');
+            whackScore++;
+            hitsCount++;
+            
+            // Show score popup
+            showScorePopup(hole, '+10 SAB');
+            
+            // Update HUD
+            updateWhackHUD();
+            
+            // Hide mole after hit
+            setTimeout(() => {
+                hole.classList.remove('up', 'hit');
+            }, 300);
+        }
+    }
+    
+    function showScorePopup(hole, text) {
+        const rect = hole.getBoundingClientRect();
+        const popup = document.createElement('div');
+        popup.className = 'score-popup';
+        popup.textContent = text;
+        popup.style.left = rect.left + rect.width / 2 + 'px';
+        popup.style.top = rect.top + 'px';
+        
+        document.body.appendChild(popup);
+        
+        setTimeout(() => {
+            document.body.removeChild(popup);
+        }, 1000);
+    }
+    
+    function updateWhackHUD() {
+        document.getElementById('gameTime').textContent = whackTime;
+        document.getElementById('gameScore').textContent = whackScore;
+        document.getElementById('gameSAB').textContent = whackScore * 10;
+    }
+    
+    function endWhackGame() {
+        whackGameRunning = false;
+        
+        // Clear timers
+        if (gameTimer) clearInterval(gameTimer);
+        if (moleTimer) clearInterval(moleTimer);
+        
+        // Hide all moles
+        document.querySelectorAll('.hole').forEach(hole => {
+            hole.classList.remove('up', 'hit');
+        });
+        
+        // Calculate reward
+        const reward = whackScore * 10;
+        
+        // Update best score
+        if (whackScore > whackBestScore) {
+            whackBestScore = whackScore;
+            localStorage.setItem('whackBestScore', whackBestScore);
+        }
+        
+        // Show game over screen
+        document.getElementById('gameHud').style.display = 'none';
+        document.getElementById('whackGame').style.display = 'none';
+        document.getElementById('gameOverScreen').style.display = 'block';
+        
+        document.getElementById('finalScore').textContent = whackScore;
+        document.getElementById('gameReward').textContent = reward + ' SAB';
+        document.getElementById('hitsCount').textContent = hitsCount;
+        document.getElementById('missesCount').textContent = missesCount;
+        
+        // Send reward to server
+        if (reward > 0) {
+            addWhackGameReward(reward);
+        }
+        
+        // Update stats display
+        loadWhackGameStats();
+    }
+    
+    async function addWhackGameReward(reward) {
+        try {
+            const response = await fetch('/api/game_reward', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    reward: reward,
+                    score: whackScore,
+                    hits: hitsCount,
+                    misses: missesCount
+                })
+            });
+            
+            if (response.ok) {
+                // Update balance display
+                const balanceEl = document.querySelector('.balance-amount');
+                if (balanceEl) {
+                    const currentBalance = parseFloat(balanceEl.textContent);
+                    balanceEl.textContent = Math.floor(currentBalance + reward);
+                }
+            }
+        } catch (error) {
+            console.log('Failed to add whack game reward:', error);
+        }
+    }
+    
+    function restartWhackAMole() {
+        document.getElementById('gameOverScreen').style.display = 'none';
+        document.getElementById('gameStartScreen').style.display = 'block';
+    }
+    
+    // Load stats when game page is shown
+    function showPage(page) {
+        // Hide all pages
+        document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+        
+        // Show selected page
+        if (page === 'home') {
+            document.getElementById('page-home').style.display = '';
+        } else if (page === 'friends') {
+            document.getElementById('page-friends').style.display = '';
+        } else if (page === 'tasks') {
+            document.getElementById('page-tasks').style.display = '';
+        } else if (page === 'leaderboard') {
+            document.getElementById('page-leaderboard').style.display = '';
+        } else if (page === 'shop') {
+            document.getElementById('page-shop').style.display = '';
+        } else if (page === 'game') {
+            document.getElementById('page-game').style.display = '';
+            loadWhackGameStats();
+        } else {
+            // fallback: показываем главную
+            document.getElementById('page-home').style.display = '';
+        }
+        document.getElementById('navMain').classList.toggle('active', page === 'home');
+        document.getElementById('navFriends').classList.toggle('active', page === 'friends');
+        document.getElementById('navTasks').classList.toggle('active', page === 'tasks');
+        document.getElementById('navLeaderboard').classList.toggle('active', page === 'leaderboard');
+        document.getElementById('navShop').classList.toggle('active', page === 'shop');
+        document.getElementById('navGame').classList.toggle('active', page === 'game');
+        document.getElementById('navProfile').classList.toggle('active', page === 'profile');
+        document.querySelector('.header').style.display = (page === 'home') ? '' : 'none';
+        // Применяем фон профиля к карточке на лидерборде
+        const leaderboardCard = document.getElementById('leaderboardProfileCard');
+        if (leaderboardCard) {
+            const profileCard = document.getElementById('profileCard');
+            if (profileCard) {
+                leaderboardCard.style.background = window.getComputedStyle(profileCard).background;
+            }
+        }
+        if (page === 'shop') {
+            switchShopTab('cards'); // По умолчанию показываем карточки
+        }
+        if (page !== 'shop') {
+            window._shopCardsLoaded = false;
+        }
+    }
+
+    // Автозапуск музыки при первой интеракции (для мобильных браузеров)
+    const bgMusic = document.getElementById('bgMusic');
+    let musicStarted = false;
+    
+    function tryPlayMusic() {
+        if (musicStarted) return;
+        if (bgMusic && bgMusic.paused) {
+            bgMusic.volume = 0.3;
+            bgMusic.play().then(() => {
+                console.log('Музыка запущена успешно');
+                musicStarted = true;
+                // Обновляем иконку кнопки
+                document.getElementById('musicToggle').innerHTML = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M9 18V5l12-2v13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="white" stroke-width="2"/><circle cx="18" cy="16" r="3" stroke="white" stroke-width="2"/></svg>';
+            }).catch((error) => {
+                console.log('Ошибка запуска музыки:', error);
+            });
+        }
+    }
+    
+    // Множественные попытки автозапуска
+    function attemptAutoPlay() {
+        if (musicStarted) return;
+        
+        // Попытка 1: сразу при загрузке
+        setTimeout(() => {
+            if (bgMusic && bgMusic.paused && !musicStarted) {
+                bgMusic.volume = 0.3;
+                bgMusic.play().then(() => {
+                    console.log('Автозапуск музыки успешен');
+                    musicStarted = true;
+                    document.getElementById('musicToggle').innerHTML = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M9 18V5l12-2v13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="white" stroke-width="2"/><circle cx="18" cy="16" r="3" stroke="white" stroke-width="2"/></svg>';
+                }).catch(() => {
+                    console.log('Автозапуск заблокирован, ждем взаимодействия');
+                });
+            }
+        }, 100);
+        
+        // Попытка 2: через 1 секунду
+        setTimeout(() => {
+            if (bgMusic && bgMusic.paused && !musicStarted) {
+                bgMusic.volume = 0.3;
+                bgMusic.play().then(() => {
+                    console.log('Автозапуск музыки успешен (попытка 2)');
+                    musicStarted = true;
+                    document.getElementById('musicToggle').innerHTML = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M9 18V5l12-2v13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="white" stroke-width="2"/><circle cx="18" cy="16" r="3" stroke="white" stroke-width="2"/></svg>';
+                }).catch(() => {
+                    console.log('Автозапуск заблокирован (попытка 2)');
+                });
+            }
+        }, 1000);
+        
+        // Попытка 3: через 3 секунды
+        setTimeout(() => {
+            if (bgMusic && bgMusic.paused && !musicStarted) {
+                bgMusic.volume = 0.3;
+                bgMusic.play().then(() => {
+                    console.log('Автозапуск музыки успешен (попытка 3)');
+                    musicStarted = true;
+                    document.getElementById('musicToggle').innerHTML = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M9 18V5l12-2v13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="white" stroke-width="2"/><circle cx="18" cy="16" r="3" stroke="white" stroke-width="2"/></svg>';
+                }).catch(() => {
+                    console.log('Автозапуск заблокирован (попытка 3)');
+                });
+            }
+        }, 3000);
+    }
+    
+    // Добавляем обработчики для разных событий
+    window.addEventListener('click', tryPlayMusic);
+    window.addEventListener('touchstart', tryPlayMusic);
+    window.addEventListener('keydown', tryPlayMusic);
+    window.addEventListener('scroll', tryPlayMusic);
+    window.addEventListener('mousemove', tryPlayMusic);
+    window.addEventListener('focus', tryPlayMusic);
+    
+    // Попытка автозапуска при загрузке страницы
+    document.addEventListener('DOMContentLoaded', attemptAutoPlay);
+    window.addEventListener('load', attemptAutoPlay);
+    
+    // Функция переключения музыки
+    function toggleMusic() {
+        if (!bgMusic) return;
+        
+        if (bgMusic.paused) {
+            bgMusic.volume = 0.3;
+            bgMusic.play().then(() => {
+                console.log('Музыка включена');
+                musicStarted = true;
+                document.getElementById('musicToggle').innerHTML = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M9 18V5l12-2v13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="white" stroke-width="2"/><circle cx="18" cy="16" r="3" stroke="white" stroke-width="2"/></svg>';
+            }).catch((error) => {
+                console.log('Ошибка включения музыки:', error);
+            });
+        } else {
+            bgMusic.pause();
+            musicStarted = false;
+            console.log('Музыка выключена');
+            document.getElementById('musicToggle').innerHTML = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M9 18V5l12-2v13" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="#666" stroke-width="2"/><circle cx="18" cy="16" r="3" stroke="#666" stroke-width="2"/><line x1="6" y1="6" x2="18" y2="18" stroke="#666" stroke-width="2"/></svg>';
+        }
+    }
+
+    // --- Профиль: подгрузка данных и обработка ---
+    async function loadProfileWallet() {
+      const resp = await fetch(`/api/profile?telegram_id=${getTelegramId()}`);
+      const data = await resp.json();
+      if (!data.ok) return;
+      // Баланс
+      document.getElementById('profileWalletBalance').textContent = Math.floor(data.balance) + ' SAB';
+      // Язык
+      document.getElementById('profileLangSelect').value = data.lang || 'ru';
+      // Музыка
+      document.getElementById('profileMusicToggle').checked = data.music_on;
+      updateCoinShelfBalance();
+    }
+    // Открытие профиля — подгрузка данных
+    const navProfileBtn = document.getElementById('navProfile');
+    if (navProfileBtn) {
+      navProfileBtn.addEventListener('click', loadProfileWallet);
+    }
+    // Смена языка
+    function changeProfileLang() {
+      const lang = document.getElementById('profileLangSelect').value;
+      fetch('/api/set_lang', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ telegram_id: getTelegramId(), lang })
+      });
+    }
+    // Музыка
+    function toggleProfileMusic() {
+      const musicOn = document.getElementById('profileMusicToggle').checked;
+      fetch('/api/set_music', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ telegram_id: getTelegramId(), music_on: musicOn })
+      });
+      // Включить/выключить музыку на сайте
+      const bgMusic = document.getElementById('bgMusic');
+      if (bgMusic) {
+        if (musicOn) { bgMusic.play().catch(()=>{}); } else { bgMusic.pause(); }
+      }
+    }
+    // Модалки
+    function openReceiveModal() {
+      document.getElementById('receiveModal').style.display = 'flex';
+      // ID
+      const id = getTelegramId();
+      document.getElementById('receiveUserId').textContent = 'ID: ' + id;
+      // QR
+      generateQrForId(id);
+    }
+    function closeReceiveModal() {
+      document.getElementById('receiveModal').style.display = 'none';
+    }
+    function openSendModal() {
+      document.getElementById('sendModal').style.display = 'flex';
+    }
+    function closeSendModal() {
+      document.getElementById('sendModal').style.display = 'none';
+    }
+    function openHistoryModal() {
+      document.getElementById('historyModal').style.display = 'flex';
+      loadHistoryPage(1);
+    }
+    function closeHistoryModal() {
+      document.getElementById('historyModal').style.display = 'none';
+    }
+    // Копировать ID
+    function copyReceiveId() {
+      const id = document.getElementById('receiveUserId').textContent.replace('ID: ','');
+      navigator.clipboard.writeText(id);
+    }
+    // Генерация QR-кода (используем Google Chart API для простоты)
+    function generateQrForId(id) {
+      const qrDiv = document.getElementById('receiveQr');
+      qrDiv.innerHTML = `<img src='https://chart.googleapis.com/chart?cht=qr&chs=180x180&chl=${encodeURIComponent(id)}' alt='QR'>`;
+    }
+    // Отправка транзакции
+    function sendTransaction() {
+      const toId = document.getElementById('sendToId').value.trim();
+      const amount = parseFloat(document.getElementById('sendAmount').value);
+      if (!toId || isNaN(amount) || amount <= 0) {
+        alert('Введите корректные данные!');
+        return;
+      }
+      fetch('/api/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ from: getTelegramId(), to: toId, amount })
+      }).then(r=>r.json()).then(data=>{
+        if (data.ok) {
+          alert('Перевод выполнен!');
+          closeSendModal();
+          loadProfileWallet();
+        } else {
+          alert(data.error || 'Ошибка перевода');
+        }
+      });
+    }
+    // История транзакций
+    let historyPage = 1;
+    function loadHistoryPage(page) {
+      fetch(`/api/history?telegram_id=${getTelegramId()}&page=${page}`)
+        .then(r=>r.json()).then(data=>{
+          const list = document.getElementById('historyList');
+          list.innerHTML = '';
+          if (data.ok && data.items.length) {
+            data.items.forEach(tx => {
+              const el = document.createElement('div');
+              el.className = 'history-item';
+              el.innerHTML = `<b>${tx.type === 'in' ? '⬇️ Получено' : '⬆️ Отправлено'}</b> <span>${tx.amount} SAB</span><br><span style='color:#7a8599;font-size:0.95em;'>${tx.date}</span><br><span style='color:#7fd7ff;'>${tx.type === 'in' ? 'от' : 'к'} ${tx.peer_id}</span>`;
+              list.appendChild(el);
+            });
+            document.getElementById('historyPageInfo').textContent = `${data.page} / ${data.pages}`;
+            historyPage = data.page;
+          } else {
+            list.innerHTML = '<div style="color:#7a8599;text-align:center;">Нет транзакций</div>';
+            document.getElementById('historyPageInfo').textContent = '1 / 1';
+            historyPage = 1;
+          }
+        });
+    }
+    function prevHistoryPage() { if (historyPage > 1) loadHistoryPage(historyPage-1); }
+    function nextHistoryPage() { loadHistoryPage(historyPage+1); }
+    </script>
+    <!-- Модальное окно настроек -->
+    <div class="modal" id="settingsProfileModal" style="display:none;">
+      <div class="modal-content">
+        <span class="close" onclick="closeSettingsProfileModal()">&times;</span>
+        <div class="modal-title">Настройки</div>
+        <div class="profile-wallet-setting-row" style="margin-bottom:14px;">
+          <span>Язык:</span>
+          <select id="profileLangSelectModal" onchange="changeProfileLangModal()">
+            <option value="ru">Русский</option>
+            <option value="ua">Українська</option>
+            <option value="en">English</option>
+          </select>
+        </div>
+        <div class="profile-wallet-setting-row">
+          <span>Музыка:</span>
+          <label class="switch">
+            <input type="checkbox" id="profileMusicToggleModal" onchange="toggleProfileMusicModal()">
+            <span class="slider round"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+    <script>
+    function openSettingsModal() {
+      document.getElementById('settingsProfileModal').style.display = 'flex';
+      // Синхронизировать значения с основными настройками
+      document.getElementById('profileLangSelectModal').value = document.getElementById('profileLangSelect').value;
+      document.getElementById('profileMusicToggleModal').checked = document.getElementById('profileMusicToggle').checked;
+    }
+    function closeSettingsProfileModal() {
+      document.getElementById('settingsProfileModal').style.display = 'none';
+    }
+    function changeProfileLangModal() {
+      const lang = document.getElementById('profileLangSelectModal').value;
+      document.getElementById('profileLangSelect').value = lang;
+      changeProfileLang();
+    }
+    function toggleProfileMusicModal() {
+      const musicOn = document.getElementById('profileMusicToggleModal').checked;
+      document.getElementById('profileMusicToggle').checked = musicOn;
+      toggleProfileMusic();
+    }
+    // Синхронизировать баланс на полочке с основным балансом
+    function updateCoinShelfBalance() {
+      const main = document.getElementById('profileWalletBalance');
+      const shelf = document.getElementById('profileWalletBalanceShelf');
+      if (main && shelf) shelf.textContent = main.textContent;
+    }
+    // После загрузки профиля обновлять баланс на полочке
+    const origLoadProfileWallet = loadProfileWallet;
+    loadProfileWallet = async function() {
+      await origLoadProfileWallet.apply(this, arguments);
+      updateCoinShelfBalance();
+    }
+    </script>
+</body>
+</html> 
